@@ -2,6 +2,7 @@ package com.example.ProjectV2.service.implementation;
 
 import com.example.ProjectV2.entity.Admin;
 import com.example.ProjectV2.service.AdminService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,16 @@ class AdminServiceImplTest {
 
     @BeforeEach
     public void runBeforeEach() {
-
+        admin1 = new Admin("hosein", "hoseini", "h.hoseini@gmail.com", "h.hoseini", "hh123456");
 
     }
 
 
     @Test
     void save() {
+        adminService.save(admin1);
+        Assertions.assertEquals(admin1,adminService.findAdminByUsername(admin1.getUsername()).get());
+
     }
 
     @Test

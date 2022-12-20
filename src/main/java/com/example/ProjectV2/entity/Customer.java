@@ -14,10 +14,8 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
-@Builder
 public class Customer extends Person {
 
 

@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @ToString
-@Builder
 public class Admin extends Person {
 
     public Admin(String firstName, String lastName, String email, String username, String password, LocalDateTime dateOfRegistration) {
@@ -20,6 +20,4 @@ public class Admin extends Person {
         super(firstName, lastName, email, username, password);
     }
 
-    public Admin() {
-    }
 }

@@ -15,7 +15,6 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @ToString
-@Builder
 public class Offer extends BaseEntity<Long> {
 
     @ManyToOne(cascade = CascadeType.MERGE)

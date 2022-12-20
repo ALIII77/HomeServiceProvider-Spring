@@ -15,10 +15,8 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
 public class Expert extends Person {
 
     @ManyToMany(mappedBy = "expertSet", fetch = FetchType.EAGER)

@@ -15,7 +15,6 @@ import java.util.Objects;
 @Setter
 @Getter
 @ToString
-@Builder
 public class Person extends BaseEntity<Long> {
 
     @Column(nullable = false)

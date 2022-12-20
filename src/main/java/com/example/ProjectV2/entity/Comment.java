@@ -20,7 +20,6 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @ToString
-@Builder
 public class Comment extends BaseEntity<Long> {
 
 

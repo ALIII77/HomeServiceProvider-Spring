@@ -14,7 +14,6 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @ToString
-@Builder
 public class Transaction extends BaseEntity<Long> {
 
     @ManyToOne

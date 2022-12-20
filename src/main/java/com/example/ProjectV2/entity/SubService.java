@@ -16,7 +16,6 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @ToString
-@Builder
 public class SubService extends BaseEntity<Long> {
 
     @Column(unique = true, nullable = false)

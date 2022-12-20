@@ -17,9 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
-@Builder
 @Table(name = "order_table")
 public class Order extends BaseEntity<Long> {
 
