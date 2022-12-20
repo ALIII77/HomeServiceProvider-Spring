@@ -30,4 +30,8 @@ public interface AdminService  {
 
     void editSubServiceWithBasePrice(SubService subService,double basePrice);
 
+    void addCustomer(Customer customer);
+
+    void addExpert(Expert expert);
+
 }

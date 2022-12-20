@@ -1,7 +1,6 @@
 package com.example.ProjectV2.service.implementation;
 
 import com.example.ProjectV2.entity.*;
-import com.example.ProjectV2.enums.ExpertStatus;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
 import com.example.ProjectV2.repository.*;
@@ -10,7 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,14 +19,20 @@ public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
     private final SubServiceService subServiceService;
     private final ServiceService serviceService;
+    private final CustomerService customerService;
+
+    private final  ExpertService expertService;
+
 
 
     @Autowired
-    public AdminServiceImpl(AdminRepository adminRepository, SubServiceService subServiceService, ServiceService serviceService
-    ) {
+    public AdminServiceImpl(AdminRepository adminRepository, SubServiceService subServiceService, ServiceService serviceService,
+                            CustomerService customerService, ExpertService expertService) {
         this.adminRepository = adminRepository;
         this.serviceService = serviceService;
         this.subServiceService = subServiceService;
+        this.customerService = customerService;
+        this.expertService = expertService;
     }
 
 
@@ -123,6 +127,27 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void editSubServiceWithBasePrice(SubService subService, double basePrice) {
         subServiceService.editSubServiceWithBasePrice(subService, basePrice);
+    }
+
+    @Transactional
+    @Override
+    public void addCustomer(@Valid Customer customer) {
+        try {
+            customerService.save(customer);
+        } catch (CustomizedIllegalArgumentException exception) {
+            System.out.println(exception.getMessage());
+        }
+    }
+
+
+    @Transactional
+    @Override
+    public void addExpert(@Valid Expert expert) {
+        try {
+            expertService.save(expert);
+        } catch (CustomizedIllegalArgumentException exception) {
+            System.out.println(exception.getMessage());
+        }
     }
 
 
