@@ -65,20 +65,42 @@ public class OfferServiceImpl implements OfferService {
         return offerRepository.findById(id);
     }
 
+    @Transactional
     @Override
     public List<Offer> findAllOfferOneOrderByPrice(Long id) {
         return offerRepository.findAllOfferOneOrderByPrice(id);
     }
 
+    @Transactional
+    @Override
+    public List<Offer> findAllOfferOneOrderByExpertScore(Long id) {
+        return offerRepository.findAllOfferOneOrderByExpertScore(id);
+    }
+
+    @Transactional
     @Override
     public Optional<Offer> findOfferByOrderIdAndExpertId(Long orderId, Long expertId) {
         return offerRepository.findOfferByOrderIdAndExpertId(orderId, expertId);
     }
 
+    @Transactional
     @Override
     public boolean isExistsByOrderIdAndExpertId(Long orderId, Long expertId) {
         return findOfferByOrderIdAndExpertId(orderId, expertId).isPresent();
     }
+
+
+    @Transactional
+    @Override
+    public void editOffer(Offer offer, double duration, double price) {
+        Offer findOffer = offerRepository.findById(offer.getId())
+                .orElseThrow(() -> new NotFoundException("No exists Offer with id = " + offer.getId()));
+        findOffer.setDuration(duration);
+        findOffer.setPrice(price);
+        offerRepository.save(offer);
+    }
+
+
 
 
     private void checkConstraint(Order order, Expert expert, Offer offer) {

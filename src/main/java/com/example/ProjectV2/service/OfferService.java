@@ -17,8 +17,12 @@ public interface OfferService {
 
     List<Offer> findAllOfferOneOrderByPrice(Long id);
 
+    List<Offer> findAllOfferOneOrderByExpertScore(Long id);
+
     Optional<Offer>findOfferByOrderIdAndExpertId(Long orderId,Long expertId);
 
     boolean isExistsByOrderIdAndExpertId(Long orderId,Long expertId);
+
+    void editOffer(Offer offer,double duration,double price);
 
 }
