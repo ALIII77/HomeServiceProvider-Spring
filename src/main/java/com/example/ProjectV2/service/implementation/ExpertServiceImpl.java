@@ -1,8 +1,8 @@
 package com.example.ProjectV2.service.implementation;
 
-import com.example.ProjectV2.entity.Expert;
-import com.example.ProjectV2.entity.SubService;
+import com.example.ProjectV2.entity.*;
 import com.example.ProjectV2.enums.ExpertStatus;
+import com.example.ProjectV2.enums.OrderStatus;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
 import com.example.ProjectV2.exception.PermissionDeniedException;
@@ -24,13 +24,19 @@ public class ExpertServiceImpl implements ExpertService {
 
     private final ExpertRepository expertRepository;
     private final SubServiceRepository subServiceRepository;
+    private final OfferService offerService;
+    private final CustomerService customerService;
+    private final OrderService orderService;
 
 
 
     @Autowired
-    public ExpertServiceImpl(ExpertRepository expertRepository, SubServiceRepository subServiceRepository) {
+    public ExpertServiceImpl(ExpertRepository expertRepository, SubServiceRepository subServiceRepository, OfferService offerService, CustomerService customerService, OrderService orderService) {
         this.expertRepository=expertRepository;
         this.subServiceRepository = subServiceRepository;
+        this.offerService = offerService;
+        this.customerService = customerService;
+        this.orderService = orderService;
     }
 
 
@@ -184,5 +190,20 @@ public class ExpertServiceImpl implements ExpertService {
         expertRepository.save(findExpert);
     }
 
-
+    @Transactional
+    @Override
+    public void selectExpert(Long offerId, Long customerId) {
+        Offer findOffer = offerService.findOfferById(offerId).orElseThrow(() -> new NotFoundException("not found offer"));
+        Customer findCustomer = customerService.findById(customerId).orElseThrow(() -> new NotFoundException("not found customer"));
+        Order order = findOffer.getOrder();
+        if (!findCustomer.equals(order.getCustomer())) {
+            throw new CustomizedIllegalArgumentException();
+        }
+        if (order.getExpert() != null) {
+            throw new CustomizedIllegalArgumentException();
+        }
+        order.setOrderStatus(OrderStatus.COMING_EXPERTS);
+        order.setExpert(findOffer.getExpert());
+        orderService.save(order);
+    }
 }

@@ -27,4 +27,6 @@ public interface CustomerService {
 
     List<Service> showAllServices();
 
+    List<SubService> showAllSubServiceByService(Service service);
+
 }

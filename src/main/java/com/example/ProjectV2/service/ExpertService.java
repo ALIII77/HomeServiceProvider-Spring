@@ -27,6 +27,8 @@ public interface ExpertService {
 
     void expertConfirm(Expert expert);
 
+    void selectExpert(Long offerId,Long customerId);
+
 
 
 
