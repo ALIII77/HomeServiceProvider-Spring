@@ -5,10 +5,7 @@ import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -19,6 +16,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @ToString
+@Builder
 public class SubService extends BaseEntity<Long> {
 
     @Column(unique = true, nullable = false)

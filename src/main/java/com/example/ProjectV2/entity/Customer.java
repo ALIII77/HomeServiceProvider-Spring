@@ -4,10 +4,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -17,8 +14,10 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
+@Builder
 public class Customer extends Person {
 
 
@@ -37,6 +36,7 @@ public class Customer extends Person {
     public Customer(String firstName, String lastName, String email, String username, String password) {
         super(firstName, lastName, email, username, password);
     }
+
 
 
     public void addOrder(Order order) {
@@ -60,6 +60,7 @@ public class Customer extends Person {
         this.orderSet = orderSet;
         this.commentSet = commentSet;
     }
+
 
     //Equals And HashCode
     @Override

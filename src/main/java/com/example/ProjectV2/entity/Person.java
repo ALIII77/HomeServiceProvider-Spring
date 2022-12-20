@@ -4,10 +4,7 @@ import com.example.ProjectV2.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -18,6 +15,7 @@ import java.util.Objects;
 @Setter
 @Getter
 @ToString
+@Builder
 public class Person extends BaseEntity<Long> {
 
     @Column(nullable = false)

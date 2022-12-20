@@ -3,10 +3,7 @@ package com.example.ProjectV2.entity;
 import com.example.ProjectV2.enums.ExpertStatus;
 import com.example.ProjectV2.enums.OrderStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
@@ -18,8 +15,10 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Builder
 public class Expert extends Person {
 
     @ManyToMany(mappedBy = "expertSet", fetch = FetchType.EAGER)

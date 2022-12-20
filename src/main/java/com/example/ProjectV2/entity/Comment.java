@@ -10,10 +10,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Objects;
 
@@ -23,6 +20,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @ToString
+@Builder
 public class Comment extends BaseEntity<Long> {
 
 

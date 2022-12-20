@@ -4,10 +4,7 @@ import com.example.ProjectV2.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -18,6 +15,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @ToString
+@Builder
 public class Service extends BaseEntity<Long> {
 
     @Column(unique = true)

@@ -4,10 +4,7 @@ import com.example.ProjectV2.base.BaseEntity;
 import com.example.ProjectV2.enums.OrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.rmi.Remote;
 import java.time.LocalDateTime;
@@ -20,7 +17,9 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
+@Builder
 @Table(name = "order_table")
 public class Order extends BaseEntity<Long> {
 

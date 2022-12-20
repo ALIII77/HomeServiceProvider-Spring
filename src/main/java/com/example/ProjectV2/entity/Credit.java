@@ -12,6 +12,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @NoArgsConstructor
+@Builder
 public class Credit extends BaseEntity<Long> {
 
     @ColumnDefault("0")

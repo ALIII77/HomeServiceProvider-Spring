@@ -4,10 +4,7 @@ import com.example.ProjectV2.base.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -18,6 +15,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @ToString
+@Builder
 public class Offer extends BaseEntity<Long> {
 
     @ManyToOne(cascade = CascadeType.MERGE)
