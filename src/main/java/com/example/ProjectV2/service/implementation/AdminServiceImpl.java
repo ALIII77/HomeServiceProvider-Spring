@@ -31,7 +31,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public Admin save(@Valid Admin admin) {             //test ok
+    public Admin save(@Valid Admin admin) {
         try {
             return adminRepository.save(admin);
         } catch (CustomizedIllegalArgumentException exception) {
@@ -42,7 +42,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public void changeAdminPassword(Admin admin, String newPassword) {      /*test ok*/
+    public void changeAdminPassword(Admin admin, String newPassword) {
         Admin findAdmin = adminRepository.findAdminByUsername(admin.getUsername())
                 .orElseThrow(() -> new NotFoundException("Not found admin to change password"));
 
@@ -65,6 +65,16 @@ public class AdminServiceImpl implements AdminService {
             System.out.println(exception.getMessage());
         }
         return Optional.empty();
+    }
+
+    @Transactional
+    @Override
+    public void deleteAdminByUsername(String username) {
+        try {
+            adminRepository.deleteAdminByUsername(username);
+        } catch (CustomizedIllegalArgumentException exception) {
+            System.out.println(exception.getMessage());
+        }
     }
 
 

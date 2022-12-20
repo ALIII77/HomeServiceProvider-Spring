@@ -14,4 +14,6 @@ public interface AdminService  {
 
     Optional<Admin> findAdminByUsername(String username);
 
+    void deleteAdminByUsername(String username);
+
 }
