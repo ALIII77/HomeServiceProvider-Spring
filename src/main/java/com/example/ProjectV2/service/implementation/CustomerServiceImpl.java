@@ -128,6 +128,18 @@ public class CustomerServiceImpl implements CustomerService {
         customerService.selectExpert(offerId,customerId);
     }
 
+    @Transactional
+    @Override
+    public void changeOrderStatusToStarted(Order order) {
+        orderService.changeOrderStatusToStarted(order);
+    }
+
+    @Transactional
+    @Override
+    public void changeOrderStatusToDone(Order order, Offer offer) {
+        orderService.changeOrderStatusToDone(order,offer);
+    }
+
 
 }
 

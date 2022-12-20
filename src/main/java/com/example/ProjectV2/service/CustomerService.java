@@ -32,9 +32,12 @@ public interface CustomerService {
     void selectExpert(Long offerId,Long customerId);
 
 /*
-    void changeOrderStatusToStarted(Long orderId);
+    void changeOrderStatusToStarted(Long orderId); //
 */
-
-
+    void changeOrderStatusToStarted(Order order);//
+/*
+    void changeOrderStatusToDone(Long orderId ,Long offerId);
+*/
+    void changeOrderStatusToDone(Order order , Offer offer);
 
 }

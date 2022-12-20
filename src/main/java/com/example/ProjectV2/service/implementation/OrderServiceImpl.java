@@ -1,8 +1,10 @@
 package com.example.ProjectV2.service.implementation;
 
 import com.example.ProjectV2.entity.Customer;
+import com.example.ProjectV2.entity.Offer;
 import com.example.ProjectV2.entity.Order;
 import com.example.ProjectV2.entity.SubService;
+import com.example.ProjectV2.enums.OrderStatus;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
 import com.example.ProjectV2.exception.PermissionDeniedException;
@@ -19,17 +21,20 @@ import java.util.Optional;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CustomerService customerService;
-
     private final SubServiceService subServiceService;
+    private final OrderService orderService;
+    private final OfferService offerService;
 
 
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, CustomerService customerService, SubServiceService subServiceService) {
+    public OrderServiceImpl(OrderRepository orderRepository, CustomerService customerService, SubServiceService subServiceService, OrderService orderService, OfferService offerService) {
 
         this.orderRepository = orderRepository;
         this.customerService = customerService;
         this.subServiceService = subServiceService;
+        this.orderService = orderService;
+        this.offerService = offerService;
     }
 
 
@@ -114,5 +119,100 @@ public class OrderServiceImpl implements OrderService {
     public Optional<Order> findOrderById(Long id) {
         return orderRepository.findById(id);
     }
+
+
+    /*    @Override
+    @Transactional
+    public void changeOrderStatusToStarted(Long orderId) {
+        Order findOrder = orderService.findOrderById(orderId)
+                .orElseThrow(() -> new NotFoundException("Not found order with id = " + orderId));
+        Offer findOffer = offerService.findOfferByOrderIdAndExpertId(orderId,findOrder.getExpert().getId())
+                .orElseThrow(() -> new NotFoundException("Not found Offer with id =     "));
+        if (LocalDateTime.now().isAfter(findOffer.getOfferDate())){
+            try {
+                findOrder.setOrderStatus(OrderStatus.STARTED);
+                orderService.save(findOrder);
+            } catch (CustomizedIllegalArgumentException exception) {
+                System.out.println(exception.getMessage());
+            }
+        } else {
+            throw new PermissionDeniedException("The registered time for the order has not yet arrived");
+        }
+    }*/
+
+
+
+
+    @Transactional
+    @Override
+    public void changeOrderStatusToStarted(Order order) {
+        if (order.getOrderStatus() != OrderStatus.COMING_EXPERTS) {
+            throw new CustomizedIllegalArgumentException
+                    ("To set the status of the order to Started, the order must first be in 'COMING EXPERT' status");
+        }
+        Order findOrder = orderService.findOrderById(order.getId())
+                .orElseThrow(() -> new NotFoundException("Not found order with id = " + order.getId()));
+        Offer findOffer = offerService.findOfferByOrderIdAndExpertId(order.getId(), findOrder.getExpert().getId())
+                .orElseThrow(() -> new NotFoundException("Not exists Offer for order with id = " + order.getId()));
+        if (LocalDateTime.now().isAfter(findOffer.getOfferDate())) {
+            try {
+                findOrder.setOrderStatus(OrderStatus.STARTED);
+                orderService.save(findOrder);
+            } catch (CustomizedIllegalArgumentException exception) {
+                System.out.println(exception.getMessage());
+            }
+        } else {
+            throw new CustomizedIllegalArgumentException("The registered time for the order has not yet arrived");
+        }
+    }
+
+
+/*    @Override
+    @Transactional
+    public void changeOrderStatusToDone(Long orderId, Long offerId) {
+        Order findOrder = orderService.findOrderById(orderId)
+                .orElseThrow(() -> new NotFoundException("Not found order with id = " + orderId));
+        Offer findOffer = offerService.findOfferById(offerId)
+                .orElseThrow(() -> new NotFoundException("Not found offer with id = " + offerId));
+        if (LocalDateTime.now().isAfter(findOrder.getExecutionDate().plusHours((long) Math.ceil(findOffer.getDuration())))) {
+            try {
+                findOrder.setOrderStatus(OrderStatus.DONE);
+                orderService.save(findOrder);
+            } catch (CustomizedIllegalArgumentException exception) {
+                System.out.println(exception.getMessage());
+            }
+        } else {
+            throw new PermissionDeniedException("The registered end time of offer has not yet arrived");
+        }
+    }*/
+
+
+
+
+
+    @Override
+    public void changeOrderStatusToDone(Order order, Offer offer) {
+        if (order.getOrderStatus() != OrderStatus.STARTED) {
+            throw new CustomizedIllegalArgumentException
+                    ("the execution of the order must first be 'STARTED' state , then it  will be change status order to 'DONE' state");
+        }
+        Order findOrder = orderService.findOrderById(order.getId())
+                .orElseThrow(() -> new NotFoundException("Not found order with id = " + order.getId()));
+        Offer findOffer = offerService.findOfferById(offer.getId())
+                .orElseThrow(() -> new NotFoundException("Not found offer with id = " + offer.getId()));
+        if (LocalDateTime.now().isAfter(findOrder.getExecutionDate().plusHours((long) Math.ceil(findOffer.getDuration())))) {
+            try {
+                findOrder.setOrderStatus(OrderStatus.DONE);
+                orderService.save(findOrder);
+            } catch (CustomizedIllegalArgumentException exception) {
+                System.out.println(exception.getMessage());
+            }
+        } else {
+            throw new PermissionDeniedException("The registered end time of offer has not yet arrived");
+        }
+    }
+
+
+
 
 }
