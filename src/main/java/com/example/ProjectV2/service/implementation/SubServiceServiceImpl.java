@@ -1,12 +1,15 @@
 package com.example.ProjectV2.service.implementation;
 
+import com.example.ProjectV2.entity.Expert;
 import com.example.ProjectV2.entity.Service;
 import com.example.ProjectV2.entity.SubService;
+import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
 import com.example.ProjectV2.exception.PermissionDeniedException;
 import com.example.ProjectV2.repository.SubServiceRepository;
 import com.example.ProjectV2.service.*;
 import com.example.ProjectV2.utils.QueryUtil;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -132,6 +135,31 @@ public class SubServiceServiceImpl implements SubServiceService {
             subServiceRepository.deleteById(subService.getId());
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
+        }
+    }
+
+
+    @Transactional
+    @Override
+    public void addExpert(Long subServiceId, Expert expert) {
+        SubService findSubService = subServiceRepository.findSubServiceById(subServiceId);
+        try {
+            findSubService.addExpert(expert);
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+    }
+
+
+    @Transactional
+    @Override
+    public void update(@Valid SubService subService) {
+        if (subServiceRepository.findById(subService.getId()).isPresent()) {
+            try {
+                subServiceRepository.save(subService);
+            } catch (CustomizedIllegalArgumentException exception) {
+                System.out.println(exception.getMessage());
+            }
         }
     }
 

@@ -26,6 +26,10 @@ public interface SubServiceService {
 
     void deleteSubService(SubService subService);
 
+    void addExpert(Long subServiceId, Expert expert);
+
+    void update(SubService subService);
+
 
 
 }
