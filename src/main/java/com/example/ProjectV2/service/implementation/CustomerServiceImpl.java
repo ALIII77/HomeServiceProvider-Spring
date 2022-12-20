@@ -22,17 +22,18 @@ public class CustomerServiceImpl implements CustomerService {
     private final OrderService orderService;
     private final CommentService commentService;
     private final ServiceService serviceService;
-
     private final SubServiceService subServiceService;
+    private final CustomerService customerService;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository, OrderService orderService, CommentService commentService, ServiceService serviceService, SubServiceService subServiceService) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, OrderService orderService, CommentService commentService, ServiceService serviceService, SubServiceService subServiceService, CustomerService customerService) {
         this.customerRepository = customerRepository;
 
         this.orderService = orderService;
         this.commentService = commentService;
         this.serviceService = serviceService;
         this.subServiceService = subServiceService;
+        this.customerService = customerService;
     }
 
     @Transactional
@@ -120,6 +121,12 @@ public class CustomerServiceImpl implements CustomerService {
         return subServiceService.findAllSubServicesByService(service);
     }
 
+
+    @Transactional
+    @Override
+    public void selectExpert(Long offerId, Long customerId) {
+        customerService.selectExpert(offerId,customerId);
+    }
 
 
 }
