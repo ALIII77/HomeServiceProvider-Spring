@@ -12,19 +12,93 @@ import com.example.ProjectV2.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 
 
 @org.springframework.stereotype.Service
 public class OfferServiceImpl implements OfferService {
+    private final OfferRepository offerRepository;
+    private final ExpertService expertService;
+    private final OrderService orderService;
+
 
 
 
 
     @Autowired
-    public OfferServiceImpl() {
+    public OfferServiceImpl(OfferRepository offerRepository, ExpertService expertService, OrderService orderService) {
+        this.offerRepository = offerRepository;
+        this.expertService = expertService;
+        this.orderService = orderService;
+    }
 
+    @Transactional
+    @Override
+    public void save(@Valid Offer offer) {
+        try {
+            offerRepository.save(offer);
+        } catch (CustomizedIllegalArgumentException exception) {
+            System.out.println(exception.getMessage());
+        }
+
+    }
+
+    @Transactional
+    @Override
+    public void addOffer(Offer offer, Long expertId) {
+
+        Expert findExpert = expertService.findExpertById(expertId)
+                .orElseThrow(() -> new NotFoundException("Not exists expert to create a offer to an order"));
+        Order findOrder = orderService.findOrderById(offer.getOrder().getId())
+                .orElseThrow(() -> new NotFoundException("Not exists order with "
+                        + offer.getOrder().getId() + " id  to create a offer for that"));
+        checkConstraint(findOrder, findExpert, offer);
+        offer.setOrder(findOrder);
+        offer.setExpert(findExpert);
+        offerRepository.save(offer);
+    }
+
+    @Override
+    public Optional<Offer> findOfferById(Long id) {
+        return offerRepository.findById(id);
+    }
+
+    @Override
+    public List<Offer> findAllOfferOneOrderByPrice(Long id) {
+        return offerRepository.findAllOfferOneOrderByPrice(id);
+    }
+
+    @Override
+    public Optional<Offer> findOfferByOrderIdAndExpertId(Long orderId, Long expertId) {
+        return offerRepository.findOfferByOrderIdAndExpertId(orderId, expertId);
+    }
+
+    @Override
+    public boolean isExistsByOrderIdAndExpertId(Long orderId, Long expertId) {
+        return findOfferByOrderIdAndExpertId(orderId, expertId).isPresent();
+    }
+
+
+    private void checkConstraint(Order order, Expert expert, Offer offer) {
+
+        if (!(order.getSubService().getBasePrice() <= offer.getPrice())) {
+            throw new PermissionDeniedException("Sub service base price is " + order.getSubService().getBasePrice()
+                    + " Offer purposed price must be more than "
+                    + order.getProposedPrice() + "  base sub service price");
+        }
+        if (!expert.getSubServiceSet().contains(order.getSubService())) {
+            throw new PermissionDeniedException("the expert with  " + expert.getUsername()
+                    + " username has not been added to the " + order.getSubService().getName() + " subservice !!");
+        }
+        if (expert.getExpertStatus() != ExpertStatus.CONFIRMED) {
+            throw new CustomizedIllegalArgumentException(" expert must be confirmed by admin to add offer");
+        }
+
+        if (isExistsByOrderIdAndExpertId(order.getId(), offer.getExpert().getId())) {
+            throw new CustomizedIllegalArgumentException("this expert is sended offert to this order!!!!!");
+        }
     }
 
 

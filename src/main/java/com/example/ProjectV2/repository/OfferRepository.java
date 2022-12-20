@@ -12,5 +12,14 @@ import java.util.Optional;
 @Repository
 public interface OfferRepository extends JpaRepository<Offer,Long> {
 
+    @Query("select o from Offer o where o.order.id=:id order by o.price asc ")
+    List<Offer> findAllOfferOneOrderByPrice(Long id);
+
+    @Query("select o from Offer o where o.order.id=:id order by o.expert.score desc ")
+    List<Offer> findAllOfferOneOrderByExpertScore(Long id);
+
+    Optional<Offer>findOfferByOrderIdAndExpertId(Long orderId,Long expertId);
+
+
 
 }
