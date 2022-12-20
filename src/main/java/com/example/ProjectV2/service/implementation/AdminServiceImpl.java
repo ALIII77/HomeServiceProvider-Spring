@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +21,8 @@ public class AdminServiceImpl implements AdminService {
     private final SubServiceService subServiceService;
     private final ServiceService serviceService;
     private final CustomerService customerService;
-
     private final  ExpertService expertService;
+
 
 
 
@@ -148,6 +149,41 @@ public class AdminServiceImpl implements AdminService {
         } catch (CustomizedIllegalArgumentException exception) {
             System.out.println(exception.getMessage());
         }
+    }
+
+    @Transactional
+    @Override
+    public void addExpertWithPicture(Expert expert, File file) {
+        try {
+            expertService.saveExpertWithPicture(expert, file);
+        } catch (CustomizedIllegalArgumentException exception) {
+            System.out.println(exception.getMessage());
+        }
+    }
+
+
+    @Transactional
+    @Override
+    public void addExpertToSubService(Expert expert, String subServiceName) {
+        expertService.addExpertToSubService(expert, subServiceName);
+    }
+
+    @Transactional
+    @Override
+    public void deleteExpertFromSubService(Expert expert, String subServiceName) {
+        expertService.deleteExpertFromSubService(expert, subServiceName);
+    }
+
+    @Transactional
+    @Override
+    public void expertConfirm(Expert expert) {
+        expertService.expertConfirm(expert);
+    }
+
+    @Transactional
+    @Override
+    public void deleteSubService(SubService subService) {
+        subServiceService.deleteSubService(subService);
     }
 
 

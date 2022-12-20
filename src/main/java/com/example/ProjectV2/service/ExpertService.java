@@ -21,5 +21,13 @@ public interface ExpertService {
 
     Optional<Expert> findExpertById(Long id);
 
+    void addExpertToSubService(Expert expert, String subServiceName);
+
+    void deleteExpertFromSubService(Expert expert,String subServiceName);
+
+    void expertConfirm(Expert expert);
+
+
+
 
 }

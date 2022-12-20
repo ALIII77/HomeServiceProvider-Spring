@@ -34,4 +34,14 @@ public interface AdminService  {
 
     void addExpert(Expert expert);
 
+    void addExpertWithPicture(Expert expert , File file);
+
+    void addExpertToSubService(Expert expert,String subServiceName);
+
+    void deleteExpertFromSubService(Expert expert,String subServiceName);
+
+    void expertConfirm(Expert expert);
+
+    void  deleteSubService(SubService subService);
+
 }

@@ -1,6 +1,7 @@
 package com.example.ProjectV2.service.implementation;
 
 import com.example.ProjectV2.entity.Expert;
+import com.example.ProjectV2.entity.SubService;
 import com.example.ProjectV2.enums.ExpertStatus;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
@@ -22,12 +23,14 @@ import java.util.Optional;
 public class ExpertServiceImpl implements ExpertService {
 
     private final ExpertRepository expertRepository;
+    private final SubServiceRepository subServiceRepository;
 
 
 
     @Autowired
-    public ExpertServiceImpl(ExpertRepository expertRepository) {
+    public ExpertServiceImpl(ExpertRepository expertRepository, SubServiceRepository subServiceRepository) {
         this.expertRepository=expertRepository;
+        this.subServiceRepository = subServiceRepository;
     }
 
 
@@ -133,8 +136,53 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
 
+    @Transactional
+    @Override
+    public void addExpertToSubService(Expert expert, String subServiceName) {
 
+        Optional<Expert> findExpertOptional = expertRepository.findExpertByUsername(expert.getUsername());
+        if (findExpertOptional.isEmpty()) {
+            throw new NotFoundException("Not found expert with this username");
+        }
+        Optional<SubService> findSubServiceOptional = subServiceRepository.findSubServiceByName(subServiceName);
+        if (findSubServiceOptional.isEmpty()) {
+            throw new NotFoundException("Not found sub service with this name");
+        }
+        Expert findExpert = findExpertOptional.get();
+        SubService findSubService = findSubServiceOptional.get();
+        if (findExpert.getExpertStatus() == ExpertStatus.CONFIRMED) {
+            findSubService.addExpert(findExpert);                         //as samte subservice add kardam dorost shod
+            subServiceRepository.save(findSubService);
+        } else {
+            throw new CustomizedIllegalArgumentException("Expert must be in confirmed status by admin");
+        }
+    }
 
+    @Transactional
+    @Override
+    public void deleteExpertFromSubService(Expert expert, String subServiceName) {
+
+        Expert findExpert = expertRepository.findExpertByUsername(expert.getUsername()).orElseThrow(
+                () -> new NotFoundException("Not found expert with this username"));
+
+        SubService findSubServices = subServiceRepository.findSubServiceByName(subServiceName)
+                .orElseThrow(() -> new NotFoundException("Not found subService with this sub service name"));
+
+        findSubServices.getExpertSet().remove(findExpert);               //as samti ke mappedby nadare bayad hazf kard
+        expertRepository.save(findExpert);
+    }
+
+    @Transactional
+    @Override
+    public void expertConfirm(Expert expert) {
+        Optional<Expert> expertOptional = expertRepository.findExpertByUsername(expert.getUsername());
+        if (expertOptional.isEmpty()) {
+            throw new NotFoundException("Not found expert to confirm by admin");
+        }
+        Expert findExpert = expertOptional.get();
+        findExpert.setExpertStatus(ExpertStatus.CONFIRMED);
+        expertRepository.save(findExpert);
+    }
 
 
 }
