@@ -30,6 +30,11 @@ public class SubServiceServiceImpl implements SubServiceService {
         this.subServiceRepository = subServiceRepository;
     }
 
+    @Override
+    public SubService save(SubService subService) {
+        return subServiceRepository.save(subService);
+    }
+
     @Transactional
     @Override
     public SubService save(String serviceName, SubService subService) {
@@ -162,11 +167,6 @@ public class SubServiceServiceImpl implements SubServiceService {
             }
         }
     }
-
-
-
-
-
 
 
 

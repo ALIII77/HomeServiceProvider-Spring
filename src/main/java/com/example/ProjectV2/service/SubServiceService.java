@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface SubServiceService {
 
+    SubService save(SubService subService);
+
     SubService save(String serviceName, SubService subService);
 
     List<SubService> findAllSubServicesByService( Service service);

@@ -15,4 +15,6 @@ public interface CustomerService {
 
     Optional<Customer>findCustomerByUsername(String username);
 
+    Optional<Customer> findById(Long id);
+
 }
