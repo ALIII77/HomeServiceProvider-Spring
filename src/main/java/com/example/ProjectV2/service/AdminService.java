@@ -16,4 +16,18 @@ public interface AdminService  {
 
     void deleteAdminByUsername(String username);
 
+    void createNewService(Service service);
+
+    SubService createNewSubService(String serviceName, SubService subService);
+
+    List<Service> showAllServices();
+
+    List<SubService> findAllSubServiceByService(Service service);
+
+    void editSubService(String subServiceName, String description, double basePrice);
+
+    void editSubServiceWithDescription(SubService subService,String description);
+
+    void editSubServiceWithBasePrice(SubService subService,double basePrice);
+
 }

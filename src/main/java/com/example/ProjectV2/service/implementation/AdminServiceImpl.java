@@ -9,6 +9,7 @@ import com.example.ProjectV2.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
@@ -18,14 +19,16 @@ import java.util.Optional;
 public class AdminServiceImpl implements AdminService {
 
     private final AdminRepository adminRepository;
-
-
-
+    private final SubServiceService subServiceService;
+    private final ServiceService serviceService;
 
 
     @Autowired
-    public AdminServiceImpl(AdminRepository adminRepository) {
+    public AdminServiceImpl(AdminRepository adminRepository, SubServiceService subServiceService, ServiceService serviceService
+    ) {
         this.adminRepository = adminRepository;
+        this.serviceService = serviceService;
+        this.subServiceService = subServiceService;
     }
 
 
@@ -76,6 +79,54 @@ public class AdminServiceImpl implements AdminService {
             System.out.println(exception.getMessage());
         }
     }
+
+    @Transactional
+    @Override
+    public void createNewService(@Valid Service service) {
+        try {
+            serviceService.save(service);
+        } catch (CustomizedIllegalArgumentException exception) {
+            System.out.println(exception.getMessage());
+        }
+    }
+
+    @Transactional
+    @Override
+    public SubService createNewSubService(String serviceName, SubService subService) {
+        return subServiceService.save(serviceName, subService);
+    }
+
+    @Override
+    public List<Service> showAllServices() {
+        return serviceService.findAll();
+    }
+
+    @Override
+    public List<SubService> findAllSubServiceByService(Service service) {
+        return subServiceService.findAllSubServicesByService(service);
+    }
+
+    @Transactional
+    @Override
+    public void editSubService(String subServiceName, String description, double basePrice) {
+        subServiceService.editSubService(subServiceName, description, basePrice);
+    }
+
+
+    @Transactional
+    @Override
+    public void editSubServiceWithDescription(SubService subService, String description) {
+        subServiceService.editSubServiceWithDescription(subService, description);
+    }
+
+    @Transactional
+    @Override
+    public void editSubServiceWithBasePrice(SubService subService, double basePrice) {
+        subServiceService.editSubServiceWithBasePrice(subService, basePrice);
+    }
+
+
+
 
 
 }
