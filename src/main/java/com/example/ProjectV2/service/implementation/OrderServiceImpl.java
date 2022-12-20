@@ -13,6 +13,7 @@ import com.example.ProjectV2.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -26,7 +27,6 @@ public class OrderServiceImpl implements OrderService {
     private final OfferService offerService;
 
 
-
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, CustomerService customerService, SubServiceService subServiceService, OrderService orderService, OfferService offerService) {
 
@@ -36,8 +36,6 @@ public class OrderServiceImpl implements OrderService {
         this.orderService = orderService;
         this.offerService = offerService;
     }
-
-
 
 
     @Transactional
@@ -141,8 +139,6 @@ public class OrderServiceImpl implements OrderService {
     }*/
 
 
-
-
     @Transactional
     @Override
     public void changeOrderStatusToStarted(Order order) {
@@ -187,9 +183,6 @@ public class OrderServiceImpl implements OrderService {
     }*/
 
 
-
-
-
     @Override
     public void changeOrderStatusToDone(Order order, Offer offer) {
         if (order.getOrderStatus() != OrderStatus.STARTED) {
@@ -211,8 +204,6 @@ public class OrderServiceImpl implements OrderService {
             throw new PermissionDeniedException("The registered end time of offer has not yet arrived");
         }
     }
-
-
 
 
 }

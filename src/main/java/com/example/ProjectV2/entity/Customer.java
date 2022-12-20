@@ -22,15 +22,15 @@ import java.util.Set;
 public class Customer extends Person {
 
 
-    @OneToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
     @ToString.Exclude
     private Credit credit;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "customer",cascade = CascadeType.REMOVE) //bidirectional
-    private Set<Order>orderSet;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE) //bidirectional
+    private Set<Order> orderSet;
 
-    @OneToMany(mappedBy = "customer",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
     @ToString.Exclude
     private Set<Comment> commentSet;
 
@@ -39,16 +39,18 @@ public class Customer extends Person {
     }
 
 
-    public void addOrder(Order order){
-        if (orderSet==null){
-            this.orderSet=new HashSet<>();
-        }orderSet.add(order);
+    public void addOrder(Order order) {
+        if (orderSet == null) {
+            this.orderSet = new HashSet<>();
+        }
+        orderSet.add(order);
     }
 
-    public void addComment(Comment comment){
-        if (commentSet==null){
-            this.commentSet=new HashSet<>();
-        }commentSet.add(comment);
+    public void addComment(Comment comment) {
+        if (commentSet == null) {
+            this.commentSet = new HashSet<>();
+        }
+        commentSet.add(comment);
     }
 
     public Customer(String firstName, String lastName, String email, String username, String password

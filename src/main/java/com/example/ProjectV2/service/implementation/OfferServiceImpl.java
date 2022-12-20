@@ -16,15 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-
 @org.springframework.stereotype.Service
 public class OfferServiceImpl implements OfferService {
     private final OfferRepository offerRepository;
     private final ExpertService expertService;
     private final OrderService orderService;
-
-
-
 
 
     @Autowired
@@ -99,8 +95,6 @@ public class OfferServiceImpl implements OfferService {
         findOffer.setPrice(price);
         offerRepository.save(offer);
     }
-
-
 
 
     private void checkConstraint(Order order, Expert expert, Offer offer) {

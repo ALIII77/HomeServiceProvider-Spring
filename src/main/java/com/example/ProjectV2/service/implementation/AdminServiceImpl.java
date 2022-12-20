@@ -21,10 +21,7 @@ public class AdminServiceImpl implements AdminService {
     private final SubServiceService subServiceService;
     private final ServiceService serviceService;
     private final CustomerService customerService;
-    private final  ExpertService expertService;
-
-
-
+    private final ExpertService expertService;
 
     @Autowired
     public AdminServiceImpl(AdminRepository adminRepository, SubServiceService subServiceService, ServiceService serviceService,
@@ -185,9 +182,6 @@ public class AdminServiceImpl implements AdminService {
     public void deleteSubService(SubService subService) {
         subServiceService.deleteSubService(subService);
     }
-
-
-
 
 
 }

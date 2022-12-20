@@ -29,10 +29,9 @@ public class ExpertServiceImpl implements ExpertService {
     private final OrderService orderService;
 
 
-
     @Autowired
     public ExpertServiceImpl(ExpertRepository expertRepository, SubServiceRepository subServiceRepository, OfferService offerService, CustomerService customerService, OrderService orderService) {
-        this.expertRepository=expertRepository;
+        this.expertRepository = expertRepository;
         this.subServiceRepository = subServiceRepository;
         this.offerService = offerService;
         this.customerService = customerService;

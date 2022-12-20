@@ -10,6 +10,7 @@ import com.example.ProjectV2.service.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,8 +47,6 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return null;
     }
-
-
 
 
     @Transactional
@@ -125,7 +124,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     @Override
     public void selectExpert(Long offerId, Long customerId) {
-        customerService.selectExpert(offerId,customerId);
+        customerService.selectExpert(offerId, customerId);
     }
 
     @Transactional
@@ -137,7 +136,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     @Override
     public void changeOrderStatusToDone(Order order, Offer offer) {
-        orderService.changeOrderStatusToDone(order,offer);
+        orderService.changeOrderStatusToDone(order, offer);
     }
 
 

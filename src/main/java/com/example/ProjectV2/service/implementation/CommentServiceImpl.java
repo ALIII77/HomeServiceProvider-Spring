@@ -11,6 +11,7 @@ import com.example.ProjectV2.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Optional;
 
 @org.springframework.stereotype.Service
@@ -77,8 +78,6 @@ public class CommentServiceImpl implements CommentService {
             System.out.println(exception.getMessage());
         }
     }*/
-
-
 
 
     @Transactional

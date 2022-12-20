@@ -4,6 +4,7 @@ public class CustomizedIllegalArgumentException extends IllegalArgumentException
 
     public CustomizedIllegalArgumentException() {
     }
+
     public CustomizedIllegalArgumentException(String s) {
         super(s);
     }

@@ -25,7 +25,7 @@ public class SubServiceServiceImpl implements SubServiceService {
 
 
     @Autowired
-    public SubServiceServiceImpl(ServiceService serviceService,SubServiceRepository subServiceRepository) {
+    public SubServiceServiceImpl(ServiceService serviceService, SubServiceRepository subServiceRepository) {
         this.serviceService = serviceService;
         this.subServiceRepository = subServiceRepository;
     }
@@ -167,7 +167,6 @@ public class SubServiceServiceImpl implements SubServiceService {
             }
         }
     }
-
 
 
 }

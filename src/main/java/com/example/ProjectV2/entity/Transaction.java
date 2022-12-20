@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -24,8 +25,6 @@ public class Transaction extends BaseEntity<Long> {
     private double amount;
 
 
-
-
     //Equals And HashCode
     @Override
     public boolean equals(Object o) {
@@ -34,6 +33,7 @@ public class Transaction extends BaseEntity<Long> {
         Transaction that = (Transaction) o;
         return Double.compare(that.amount, amount) == 0 && Objects.equals(credit, that.credit) && Objects.equals(date, that.date);
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(credit, date, amount);

@@ -8,6 +8,7 @@ import com.example.ProjectV2.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,12 +19,10 @@ public class ServiceServiceImpl implements ServiceService {
     private final ServiceRepository serviceRepository;
 
 
-
     @Autowired
     public ServiceServiceImpl(ServiceRepository serviceRepository) {
-        this.serviceRepository= serviceRepository;
+        this.serviceRepository = serviceRepository;
     }
-
 
 
     @Override
@@ -36,11 +35,11 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public Service save(@Valid Service service) {
         try {
-            for (SubService s :service.getSubServices()) {
+            for (SubService s : service.getSubServices()) {
                 s.setService(service);
             }
             return serviceRepository.save(service);
-        }catch (CustomizedIllegalArgumentException exception){
+        } catch (CustomizedIllegalArgumentException exception) {
             System.out.println(exception.getMessage());
         }
         return null;
@@ -49,10 +48,9 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Transactional
     @Override
-    public Optional<Service> findServiceByName(String name){
+    public Optional<Service> findServiceByName(String name) {
         return serviceRepository.findServiceByName(name);
     }
-
 
 
 }

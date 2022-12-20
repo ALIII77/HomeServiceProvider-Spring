@@ -7,9 +7,9 @@ import jakarta.validation.Validation;
 import jakarta.validation.ValidatorFactory;
 
 public class Validate {
-    private static ValidatorFactory validatorFactory= Validation.buildDefaultValidatorFactory();
+    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
 
-    public static Validator getValidator(){
+    public static Validator getValidator() {
         return validatorFactory.getValidator();
     }
 }

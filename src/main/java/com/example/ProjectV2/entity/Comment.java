@@ -37,7 +37,7 @@ public class Comment extends BaseEntity<Long> {
 
     @Column(nullable = false)
     @Positive(message = "message")
-    @Max(value = 5,message = "message")
+    @Max(value = 5, message = "message")
     private double score;
 
     @OneToOne(mappedBy = "comment")
@@ -56,7 +56,6 @@ public class Comment extends BaseEntity<Long> {
         this.score = score;
         this.order = order;
     }
-
 
 
     //Equals And HashCode

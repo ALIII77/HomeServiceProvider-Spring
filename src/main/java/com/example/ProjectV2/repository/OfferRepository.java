@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface OfferRepository extends JpaRepository<Offer,Long> {
+public interface OfferRepository extends JpaRepository<Offer, Long> {
 
     @Query("select o from Offer o where o.order.id=:id order by o.price asc ")
     List<Offer> findAllOfferOneOrderByPrice(Long id);
@@ -18,8 +18,7 @@ public interface OfferRepository extends JpaRepository<Offer,Long> {
     @Query("select o from Offer o where o.order.id=:id order by o.expert.score desc ")
     List<Offer> findAllOfferOneOrderByExpertScore(Long id);
 
-    Optional<Offer>findOfferByOrderIdAndExpertId(Long orderId,Long expertId);
-
+    Optional<Offer> findOfferByOrderIdAndExpertId(Long orderId, Long expertId);
 
 
 }

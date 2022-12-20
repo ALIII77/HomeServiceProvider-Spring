@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -20,7 +21,7 @@ import java.util.Set;
 @ToString
 public class SubService extends BaseEntity<Long> {
 
-    @Column(unique = true ,nullable = false)
+    @Column(unique = true, nullable = false)
     @NotBlank(message = "cant name attribute is null")
     private String name;
 
@@ -45,7 +46,6 @@ public class SubService extends BaseEntity<Long> {
     private Set<Order> orderSet;
 
 
-
     public SubService(String name, String description, double basePrice) {
         this.name = name;
         this.description = description;
@@ -53,16 +53,18 @@ public class SubService extends BaseEntity<Long> {
     }
 
 
-    public void addExpert(Expert expert){
-        if (expertSet==null){
-            this.expertSet=new HashSet<>();
-        }expertSet.add(expert);
+    public void addExpert(Expert expert) {
+        if (expertSet == null) {
+            this.expertSet = new HashSet<>();
+        }
+        expertSet.add(expert);
     }
 
-    public void addOrder(Order order){
-        if (orderSet==null){
-            this.orderSet=new HashSet<>();
-        }orderSet.add(order);
+    public void addOrder(Order order) {
+        if (orderSet == null) {
+            this.orderSet = new HashSet<>();
+        }
+        orderSet.add(order);
     }
 
     public SubService(String name, Service service, String description, double basePrice, Set<Expert> expertSet, Set<Order> orderSet) {
@@ -80,9 +82,10 @@ public class SubService extends BaseEntity<Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SubService that = (SubService) o;
-        return Objects.equals(basePrice,that.basePrice) && Objects.equals(name, that.name)
-                && Objects.equals(service,that.service) && Objects.equals(description, that.description);
+        return Objects.equals(basePrice, that.basePrice) && Objects.equals(name, that.name)
+                && Objects.equals(service, that.service) && Objects.equals(description, that.description);
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(name, service, description, basePrice);

@@ -23,7 +23,7 @@ public class Service extends BaseEntity<Long> {
     @Column(unique = true)
     @NotBlank(message = "cant name attribute is null")
     private String name;
-    @OneToMany(mappedBy = "service", cascade = {CascadeType.PERSIST,CascadeType.REMOVE},fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "service", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @ToString.Exclude
     private Set<SubService> subServices;
 
@@ -51,8 +51,9 @@ public class Service extends BaseEntity<Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Service service = (Service) o;
-        return Objects.equals(name, service.name) && Objects.equals(id,service.id);
+        return Objects.equals(name, service.name) && Objects.equals(id, service.id);
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(name, id);

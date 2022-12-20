@@ -2,6 +2,6 @@ package com.example.ProjectV2.enums;
 
 public enum TransactionStatus {
 
-        ACCEPTED,
-        NOT_ACCEPTED
+    ACCEPTED,
+    NOT_ACCEPTED
 }

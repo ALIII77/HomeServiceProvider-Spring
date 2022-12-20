@@ -47,7 +47,7 @@ public class Order extends BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @OneToMany(mappedBy = "order",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
     @ToString.Exclude
     private Set<Offer> offerSet;
 
@@ -61,8 +61,6 @@ public class Order extends BaseEntity<Long> {
     @OneToOne()
     @ToString.Exclude
     private Comment comment;
-
-
 
 
     public Order(String jobDescription, LocalDateTime executionDate, String address, double proposedPrice, OrderStatus orderStatus) {
@@ -87,10 +85,11 @@ public class Order extends BaseEntity<Long> {
         this.proposedPrice = proposedPrice;
     }
 
-    public void addOffer(Offer offer){
-        if (offerSet==null){
-            this.offerSet=new HashSet<>();
-        }offerSet.add(offer);
+    public void addOffer(Offer offer) {
+        if (offerSet == null) {
+            this.offerSet = new HashSet<>();
+        }
+        offerSet.add(offer);
     }
 
     public Order(Customer customer, Expert expert, String jobDescription, LocalDateTime executionDate
@@ -109,8 +108,8 @@ public class Order extends BaseEntity<Long> {
 
 
     @PrePersist
-    private void prePersist(){
-        orderStatus=OrderStatus.WAITING_FOR_SUGGESTION_OF_EXPERTS;
+    private void prePersist() {
+        orderStatus = OrderStatus.WAITING_FOR_SUGGESTION_OF_EXPERTS;
     }
 
     //Equals And HashCode
@@ -125,6 +124,7 @@ public class Order extends BaseEntity<Long> {
                 && orderStatus == order.orderStatus && Objects.equals(subService, order.subService)
                 && Objects.equals(comment, order.comment);
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(customer, expert, jobDescription, executionDate, address, proposedPrice, orderStatus, subService, comment);

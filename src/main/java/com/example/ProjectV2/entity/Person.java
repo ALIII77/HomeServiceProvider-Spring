@@ -35,17 +35,17 @@ public class Person extends BaseEntity<Long> {
     @NotBlank(message = "can not be inset space in email")
     private String email;
 
-    @Column(unique = true,nullable = false)
+    @Column(unique = true, nullable = false)
     @NotEmpty
     @NotNull
     @NotBlank(message = "can not be inset space in username")
-    @Pattern(regexp = "^[A-Za-z0-9_.]+$",message = "No match username with pattern")
+    @Pattern(regexp = "^[A-Za-z0-9_.]+$", message = "No match username with pattern")
     private String username;
 
     @Column(nullable = false)
     @NotEmpty
     @NotNull
-    @Pattern(regexp = "^[A-Za-z0-9._$%^&*#!@\\-/\\\\]{8,8}+$",message = "No match password with pattern")
+    @Pattern(regexp = "^[A-Za-z0-9._$%^&*#!@\\-/\\\\]{8,8}+$", message = "No match password with pattern")
     private String password;
 
     @CreationTimestamp
@@ -67,7 +67,6 @@ public class Person extends BaseEntity<Long> {
         this.username = username;
         this.password = password;
     }
-
 
 
     //Equals And HashCode

@@ -20,17 +20,17 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @ToString
-public class Expert extends Person{
+public class Expert extends Person {
 
-    @ManyToMany(mappedBy = "expertSet",fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "expertSet", fetch = FetchType.EAGER)
     @ToString.Exclude
     private Set<SubService> subServiceSet;
 
-    @OneToMany(mappedBy = "expert",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "expert", cascade = CascadeType.REMOVE)
     @ToString.Exclude
-    private Set<Offer>offerSet;
+    private Set<Offer> offerSet;
 
-    @OneToMany(mappedBy = "expert",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "expert", cascade = CascadeType.REMOVE)
     @ToString.Exclude
     private Set<Comment> commentSet;
 
@@ -39,9 +39,9 @@ public class Expert extends Person{
 
     @OneToMany(mappedBy = "expert")
     @ToString.Exclude
-    private Set<Order>orderSet;
+    private Set<Order> orderSet;
 
-    @OneToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
     @ToString.Exclude
     private Credit credit;
     @ColumnDefault("0")
@@ -58,17 +58,18 @@ public class Expert extends Person{
     }
 
 
-
-    public void addOffer(Offer offer){
-        if (offerSet==null){
-            this.offerSet=new HashSet<>();
-        }offerSet.add(offer);
+    public void addOffer(Offer offer) {
+        if (offerSet == null) {
+            this.offerSet = new HashSet<>();
+        }
+        offerSet.add(offer);
     }
 
-    public void addComment(Comment comment){
-        if (commentSet==null){
-            this.commentSet=new HashSet<>();
-        }commentSet.add(comment);
+    public void addComment(Comment comment) {
+        if (commentSet == null) {
+            this.commentSet = new HashSet<>();
+        }
+        commentSet.add(comment);
     }
 
 
@@ -88,8 +89,8 @@ public class Expert extends Person{
     }
 
     @PrePersist
-    private void prePersist(){
-        expertStatus= ExpertStatus.NEW;
+    private void prePersist() {
+        expertStatus = ExpertStatus.NEW;
     }
 
     //Equals And HashCode
