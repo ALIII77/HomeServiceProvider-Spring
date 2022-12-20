@@ -1,14 +1,12 @@
 package com.example.ProjectV2.service.implementation;
 
 import com.example.ProjectV2.entity.*;
-import com.example.ProjectV2.entity.Service;
-import com.example.ProjectV2.enums.OrderStatus;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
 import com.example.ProjectV2.exception.PermissionDeniedException;
 import com.example.ProjectV2.repository.CustomerRepository;
 import com.example.ProjectV2.service.*;
-import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,11 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final OrderService orderService;
+    private final CommentService commentService;
+    private final ServiceService serviceService;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, OrderService orderService, CommentService commentService, ServiceService serviceService) {
         this.customerRepository = customerRepository;
 
+        this.orderService = orderService;
+        this.commentService = commentService;
+        this.serviceService = serviceService;
     }
 
     @Transactional
@@ -90,6 +94,24 @@ public class CustomerServiceImpl implements CustomerService {
     public Optional<Customer> findById(Long id) {
         return customerRepository.findById(id);
     }
+
+
+    @Transactional
+    @Override
+    public void addOrder(String customerUsername, String description, double purposedPrice, String address, String subServiceName) {
+        orderService.addOrder(customerUsername, description, purposedPrice, address, subServiceName);
+    }
+
+    @Override
+    public void addComment(Comment comment, Long orderId) {
+        commentService.addComment(comment, orderId);
+    }
+
+    @Override
+    public List<Service> showAllServices() {
+        return serviceService.findAll();
+    }
+
 
 
 }

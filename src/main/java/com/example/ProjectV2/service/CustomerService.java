@@ -17,4 +17,14 @@ public interface CustomerService {
 
     Optional<Customer> findById(Long id);
 
+    void addOrder(String customerUsername, String description, double purposedPrice, String address, String subServiceName);
+
+/*
+    void addComment(String customerName,Long orderId,double score,String comment,String expertUsername);
+*/
+
+    void addComment(Comment comment,Long orderId);
+
+    List<Service> showAllServices();
+
 }
