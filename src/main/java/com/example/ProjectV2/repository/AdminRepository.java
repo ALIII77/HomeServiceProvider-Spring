@@ -10,6 +10,9 @@ import java.util.Optional;
 @Repository
 public interface AdminRepository extends JpaRepository<Admin,Long> {
 
+    void deleteAdminByUsername(String username);
+
+    Optional<Admin> findAdminByUsername(String username);
 
 
 }
