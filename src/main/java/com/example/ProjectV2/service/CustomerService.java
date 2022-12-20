@@ -7,5 +7,12 @@ import java.util.Optional;
 
 public interface CustomerService {
 
+    Customer save(Customer customer);
+
+    void changePassword(Customer customer,String newPassword);
+
+    boolean loginCustomer(String username,String password);
+
+    Optional<Customer>findCustomerByUsername(String username);
 
 }
