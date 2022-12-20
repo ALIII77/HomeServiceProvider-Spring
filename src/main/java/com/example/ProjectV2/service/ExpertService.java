@@ -6,7 +6,20 @@ import java.util.Optional;
 
 public interface ExpertService {
 
+    Expert save(Expert expert);
 
+    void saveExpertWithPicture(Expert expert , File file);
+
+
+    void changePassword(String username,String oldPassword,String newPassword);
+
+    void changePassword(Expert expert , String newPassword);
+
+    Optional<Expert> findExpertByUsername(String username);
+
+    boolean loginExpert(String username,String password);
+
+    Optional<Expert> findExpertById(Long id);
 
 
 }
