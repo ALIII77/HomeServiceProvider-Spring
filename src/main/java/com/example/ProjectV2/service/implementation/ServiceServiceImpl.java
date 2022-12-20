@@ -15,10 +15,42 @@ import java.util.Optional;
 @org.springframework.stereotype.Service
 public class ServiceServiceImpl implements ServiceService {
 
+    private final ServiceRepository serviceRepository;
+
 
 
     @Autowired
-    public ServiceServiceImpl() {
+    public ServiceServiceImpl(ServiceRepository serviceRepository) {
+        this.serviceRepository= serviceRepository;
+    }
+
+
+
+    @Override
+    public List<Service> findAll() {
+        return serviceRepository.findAll();
+    }
+
+
+    @Transactional
+    @Override
+    public Service save(@Valid Service service) {
+        try {
+            for (SubService s :service.getSubServices()) {
+                s.setService(service);
+            }
+            return serviceRepository.save(service);
+        }catch (CustomizedIllegalArgumentException exception){
+            System.out.println(exception.getMessage());
+        }
+        return null;
+    }
+
+
+    @Transactional
+    @Override
+    public Optional<Service> findServiceByName(String name){
+        return serviceRepository.findServiceByName(name);
     }
 
 

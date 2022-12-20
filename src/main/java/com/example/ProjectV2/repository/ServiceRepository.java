@@ -10,6 +10,10 @@ import java.util.Optional;
 @Repository
 public interface ServiceRepository extends JpaRepository<Service,Long> {
 
+    Optional<Service> findServiceByName(String name);
+
+    List<Service> findAll();
+
 
 
 }

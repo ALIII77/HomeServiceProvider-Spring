@@ -6,6 +6,11 @@ import java.util.Optional;
 
 public interface ServiceService {
 
+    List<Service> findAll();
+
+    Optional<Service> findServiceByName(String serviceName);
+
+    Service save(Service service);
 
 
 }
