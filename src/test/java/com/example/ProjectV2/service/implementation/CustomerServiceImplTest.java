@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -149,15 +149,44 @@ class CustomerServiceImplTest {
 
     @Test
     void selectExpert() {
-        expertService.selectExpert(1L,customerService.findCustomerByUsername(customer1.getUsername()).get().getId());
-        Assertions.assertEquals(OrderStatus.COMING_EXPERTS,orderService.findOrderById(2L).get().getOrderStatus());
+
+//        expertService.selectExpert(1L,customerService.findCustomerByUsername(customer1.getUsername()).get().getId());
+//        Assertions.assertEquals(OrderStatus.COMING_EXPERTS,orderService.findOrderById(2L).get().getOrderStatus());
+
     }
 
     @Test
     void changeOrderStatusToStarted() {
+        orderService.changeOrderStatusToStarted(orderService.findOrderById(2L).get());
+        Optional<Order> findOrder = orderService.findOrderById(2L);
+        assertSame(findOrder.get().getOrderStatus(), OrderStatus.STARTED);
+
     }
 
     @Test
     void changeOrderStatusToDone() {
+        orderService.changeOrderStatusToDone(orderService.findOrderById(2L).get(),offerService.findOfferById(1L).get());
+        Assertions.assertEquals(OrderStatus.DONE,orderService.findOrderById(2L).get().getOrderStatus());
     }
+    @Test
+    void findAllOfferOneOrderByExpertScore(){
+        Order findOrder = orderService.findOrderById(3L).get();
+        List<Offer> findOfferList1 = offerService.findAllOfferOneOrderByExpertScore(3L);
+        List<Offer> findOfferList2 = new ArrayList<>(findOrder.getOfferSet());
+        Comparator<Double> comparator = (d1, d2) -> Double.compare(d2, d1);
+        findOfferList2 = findOfferList2.stream()
+                .sorted(Comparator.comparing((offer -> offer.getExpert().getScore()), comparator)).toList();
+        Assertions.assertEquals(findOfferList2, findOfferList1);
+        System.out.println(findOfferList2);
+    }
+
+    @Test
+    void findAllOfferOneOrderByPrice(){
+        Order findOrder = orderService.findOrderById(1L).get();
+        List<Offer> findOfferList1 = offerService.findAllOfferOneOrderByPrice(1L);
+        List<Offer> findOfferList2 = new ArrayList<>(findOrder.getOfferSet());
+        findOfferList2 = findOfferList2.stream().sorted(Comparator.comparing((offer -> offer.getPrice()))).toList();
+        Assertions.assertEquals(findOfferList2, findOfferList1);
+    }
+
 }

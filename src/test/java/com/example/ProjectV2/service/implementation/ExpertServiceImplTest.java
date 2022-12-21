@@ -2,6 +2,7 @@ package com.example.ProjectV2.service.implementation;
 
 import com.example.ProjectV2.entity.Expert;
 import com.example.ProjectV2.entity.Offer;
+import com.example.ProjectV2.entity.builder.ExpertBuilder;
 import com.example.ProjectV2.entity.builder.OfferBuilder;
 import com.example.ProjectV2.service.ExpertService;
 import com.example.ProjectV2.service.OfferService;
@@ -32,6 +33,7 @@ class ExpertServiceImplTest {
 
     //EXPERT
     Expert expert1;
+    Expert expert4;
 
 
     //OFFER
@@ -43,6 +45,8 @@ class ExpertServiceImplTest {
 
         //EXPERT
         expert1 = expertService.findExpertByUsername("o.nobahari").get();
+        expert4 = new ExpertBuilder().firstName("Mohamad").lastName("Kermani").email("m.kermani@gmail.com")
+                .username("m.kermani").password("mk123456").image(null).build();
 
         //OFFER
         offer1 = new OfferBuilder()
@@ -64,6 +68,10 @@ class ExpertServiceImplTest {
 
     @Test
     void changePassword() {
+
+//        expertService.changePassword(expertService.findExpertByUsername(expert4.getUsername()).get(),"mk123459");
+//        Assertions.assertEquals("mk123459",expertService.findExpertByUsername(expert4.getUsername()).get().getPassword());
+
     }
 
     @Test
