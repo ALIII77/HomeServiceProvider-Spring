@@ -2,6 +2,7 @@ package com.example.ProjectV2.service.implementation;
 
 import com.example.ProjectV2.entity.*;
 import com.example.ProjectV2.entity.builder.*;
+import com.example.ProjectV2.enums.ExpertStatus;
 import com.example.ProjectV2.service.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +46,9 @@ class AdminServiceImplTest {
     //EXPERT
     Expert expert1;
     Expert expert2;
+    Expert expert3;
+    Expert expert4;
+    Expert expert5;
 
 
     //SERVICE
@@ -55,6 +59,9 @@ class AdminServiceImplTest {
     //SUB SERVICE
     SubService subService11;
     SubService subService12;
+    SubService subService21;
+    SubService subService22;
+    SubService subService23;
 
 
     //CUSTOMER
@@ -67,38 +74,49 @@ class AdminServiceImplTest {
 
 
         //ADMIN
-        admin1 = new AdminBuilder().firstName("hosein").lastName("hoseini").email("h.hoseini@gmail.com")
-                .username("h.hoseini").password("hh123456").build();
-        admin2 = new AdminBuilder().firstName("amir").lastName("amiri").email("a.amiri@gmail.com")
-                .username("a.amiri").password("aa123456").build();
+//        admin1 = new AdminBuilder().firstName("hosein").lastName("hoseini").email("h.hoseini@gmail.com")
+//                .username("h.hoseini").password("hh123456").build();
+//        admin2 = new AdminBuilder().firstName("amir").lastName("amiri").email("a.amiri@gmail.com")
+//                .username("a.amiri").password("aa123456").build();
 
-
-/*        expert1 = new Expert("Omid","Nobahari"
-                ,"o.nobahari@gmail.com","o.nobahari","on123456",null);*/
 
         //EXPERT
-        expert1 = new ExpertBuilder().firstName("Omid").lastName("Nobahari").email("o.nobahari@gmail.com")
-                .username("o.nobahari").password("on123456").image(null).build();
+//        expert1 = new ExpertBuilder().firstName("Omid").lastName("Nobahari").email("o.nobahari@gmail.com")
+//                .username("o.nobahari").password("on123456").image(null).build();
+//        expert2 = new ExpertBuilder().firstName("Morteza").lastName("Mirani").email("m.mirani@gmail.com")
+//                .username("m.mirani").password("mm123456").image(null).build();
+//        expert3 = new ExpertBuilder().firstName("Hasan").lastName("Tabrizi").email("h.tabrizi@gmail.com")
+//                .username("h.tabrizi").password("ht123456").image(null).build();
+//        expert4 = new ExpertBuilder().firstName("Mohamad").lastName("Kermani").email("m.kermani@gmail.com")
+//                .username("m.kermani").password("mk123456").image(null).build();
+//        expert5 = new ExpertBuilder().firstName("xxxx").lastName("xxxx").email("x.xxxxx@gmail.com")         //for delete
+//                .username("x.xxx").password("xx123456").image(null).build();
 
 
         //SERVICE
-        service1 = new ServiceBuilder().name("Building Decoration").build();
-        service2 = new ServiceBuilder().name("Hygiene").build();
+//        service1 = new ServiceBuilder().name("Building Decoration").build();
+//        service2 = new ServiceBuilder().name("Hygiene").build();
 
 
         //SUB SERVICE
-        subService11 = new SubServiceBuilder().name("FirePlace").description("Design With Ornamental Stone")
-                .basePrice(2500000).build();
-        subService12 = new SubServiceBuilder().name("Cabinet").description("Kitchen MDF Cabinet Designing Up To 10 Meter")
-                .basePrice(21000000).build();
+//        subService11 = new SubServiceBuilder().name("FirePlace").description("Design With Ornamental Stone")
+//                .basePrice(2500000).build();
+//        subService12 = new SubServiceBuilder().name("Cabinet").description("Kitchen MDF Cabinet Designing Up To 10 Meter")
+//                .basePrice(21000000).build();
+//        subService21 = new SubServiceBuilder().name("Car wash").description("Automobile")
+//                .basePrice(500000).build();
+//        subService22 = new SubServiceBuilder().name("House Cleaning").description("Up To 150 Meters")
+//                .basePrice(700000).build();
+//        subService23 = new SubServiceBuilder().name("xx yy").description("xy")                              //for delete
+//                .basePrice(111111).build();
 
 
         //CUSTOMER
-        customer1 = new CustomerBuilder().firstName("Mona").lastName("Yousefi").email("m.yousefi@gmail.com")
-                .username("m.yousefi").password("my123457").build();
-
-        customer2 = new CustomerBuilder().firstName("Dariush").lastName("Farokhi").email("d.farokhi@gmail.com")
-                .username("d.farokhi").password("df123456").build();
+//        customer1 = new CustomerBuilder().firstName("Mona").lastName("Yousefi").email("m.yousefi@gmail.com")
+//                .username("m.yousefi").password("my123457").build();
+//
+//        customer2 = new CustomerBuilder().firstName("Dariush").lastName("Farokhi").email("d.farokhi@gmail.com")
+//                .username("d.farokhi").password("df123456").build();
 
 
     }
@@ -115,31 +133,46 @@ class AdminServiceImplTest {
     @Test
     void changeAdminPassword() {
 
+
 //        adminService.changeAdminPassword(admin1,  "hh123457");
 //        Assertions.assertEquals("hh123457",
 //                Objects.requireNonNull(adminService.findAdminByUsername(admin1.getUsername()).orElse(null)).getPassword());
+
     }
 
     @Test
     void createNewService() {
 
 //        adminService.createNewService(service1);
-//        Assertions.assertEquals(service1,serviceService.findServiceByName(service1.getName()).get());
-
+//        Assertions.assertEquals(service1, serviceService.findServiceByName(service1.getName()).get());
+//
 //        adminService.createNewService(service2);
-//        Assertions.assertEquals(service2,serviceService.findServiceByName(service2.getName()).get());
+//        Assertions.assertEquals(service2, serviceService.findServiceByName(service2.getName()).get());
 
     }
 
     @Test
     void createNewSubService() {
+
 //        adminService.createNewSubService(service1.getName(),subService11);
 //        Assertions.assertTrue(serviceService.findServiceByName(service1.getName()).get()
 //                .getSubServices().contains(subService11));
-
+//
 //        adminService.createNewSubService(service1.getName(),subService12);
 //        Assertions.assertTrue(serviceService.findServiceByName(service1.getName()).get()
 //                .getSubServices().contains(subService12));
+//
+//        adminService.createNewSubService(service2.getName(),subService21);
+//        Assertions.assertTrue(serviceService.findServiceByName(service2.getName()).get()
+//                .getSubServices().contains(subService21));
+//
+//        adminService.createNewSubService(service2.getName(),subService22);
+//        Assertions.assertTrue(serviceService.findServiceByName(service2.getName()).get()
+//                .getSubServices().contains(subService22));
+//
+//        adminService.createNewSubService(service2.getName(), subService23);
+//        Assertions.assertTrue(serviceService.findServiceByName(service2.getName()).get()
+//                .getSubServices().contains(subService23));
 
     }
 
@@ -183,47 +216,102 @@ class AdminServiceImplTest {
     void addCustomer() {
 
 //        adminService.addCustomer(customer1);
-//        Assertions.assertEquals(customer1,customerService.findCustomerByUsername(customer1.getUsername()).get());
-
+//        Assertions.assertEquals(customer1, customerService.findCustomerByUsername(customer1.getUsername()).get());
+//
 //        adminService.addCustomer(customer2);
-//        Assertions.assertEquals(customer2,customerService.findCustomerByUsername(customer2.getUsername()).get());
+//        Assertions.assertEquals(customer2, customerService.findCustomerByUsername(customer2.getUsername()).get());
 
     }
 
     @Test
     void addExpert() {
-        adminService.addExpert(expert1);
-        Assertions.assertEquals(expert1, expertService.findExpertByUsername(expert1.getUsername()).get());
+
+//        adminService.addExpert(expert1);
+//        Assertions.assertEquals(expert1, expertService.findExpertByUsername(expert1.getUsername()).get());
+//
+//                adminService.addExpert(expert2);
+//        Assertions.assertEquals(expert2, expertService.findExpertByUsername(expert2.getUsername()).get());
+//
+//                adminService.addExpert(expert3);
+//        Assertions.assertEquals(expert3, expertService.findExpertByUsername(expert3.getUsername()).get());
+//
+//        adminService.addExpert(expert4);
+//        Assertions.assertEquals(expert4, expertService.findExpertByUsername(expert4.getUsername()).get());
+
+
+
+//        adminService.addExpert(expert5);
+//        Assertions.assertEquals(expert5, expertService.findExpertByUsername(expert5.getUsername()).get());
 
 
     }
 
     @Test
     void addExpertWithPicture() {
-        adminService.addExpertWithPicture(expertService.findExpertByUsername(expert1.getUsername()).get()
-                ,new File("G:\\Picture\\3068450.jpg"));
-    }
 
-    @Test
-    void addExpertToSubService() {
-    }
 
-    @Test
-    void deleteExpertFromSubService() {
-    }
+//        adminService.addExpertWithPicture(expertService.findExpertByUsername(expert1.getUsername()).get()
+//                ,new File("G:\\Picture\\3068450.jpg"));
 
-    @Test
-    void expertConfirm() {
-    }
 
-    @Test
-    void deleteSubService() {
     }
 
     @Test
     void findExpertByUsername() throws IOException {
-        Expert expert = expertService.findExpertByUsername(expert1.getUsername()).get();
-        Assertions.assertTrue(Arrays.equals(expert.getImage()
-                ,Files.readAllBytes(Paths.get("G:\\Picture\\3068450.jpg"))));
+
+
+//        Expert expert = expertService.findExpertByUsername(expert1.getUsername()).get();
+//        Assertions.assertTrue(Arrays.equals(expert.getImage()
+//                ,Files.readAllBytes(Paths.get("G:\\Picture\\3068450.jpg"))));
+
+
     }
+
+
+    @Test
+    void expertConfirm() {
+
+
+//        adminService.expertConfirm(expertService.findExpertByUsername("m.mirani").get());
+//        Assertions.assertEquals(ExpertStatus.CONFIRMED
+//                ,expertService.findExpertByUsername("m.mirani").get().getExpertStatus());
+
+
+    }
+
+    @Test
+    void addExpertToSubService() {
+
+//        adminService.addExpertToSubService(expertService.findExpertByUsername("o.nobahari")
+//                .get(), subServiceService.findSubServiceByName(subService11.getName()).get().getName());
+//        SubService findSubService = subServiceService.findSubServiceByName(subService11.getName()).get();
+//        Expert findExpert = expertService.findExpertByUsername(expert1.getUsername()).get();
+//        Assertions.assertTrue(findExpert.getSubServiceSet().contains(findSubService));
+//        /*Assertions.assertTrue(findSubService.getExpertSet().contains(findExpert));*/
+
+
+    }
+
+    @Test
+    void deleteExpertFromSubService() {
+
+
+//        expertService.deleteExpertFromSubService(expertService.findExpertByUsername("x.xxx").get()
+//                ,subService11.getName());
+//        Assertions.assertFalse(subServiceService.findSubServiceByName(subService11.getName()).get()
+//                .getExpertSet().contains(expertService.findExpertByUsername(expert5.getUsername()).get()));
+
+    }
+
+
+    @Test
+    void deleteSubService() {              //fail
+
+//        adminService.deleteSubService(subServiceService.findSubServiceByName("xx yy").get());
+//        Assertions.assertFalse(serviceService.findServiceByName(service2.getName()).get()
+//                .getSubServices().contains(subService23));
+
+    }
+
+
 }
