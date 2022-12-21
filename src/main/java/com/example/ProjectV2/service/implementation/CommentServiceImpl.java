@@ -95,11 +95,8 @@ public class CommentServiceImpl implements CommentService {
         newComment.setOrder(findOrder);
         commentRepository.save(newComment);
 
-        findExpert.addComment(newComment);
-        Double averageScore = findExpert.getCommentSet().stream()
-                .mapToDouble(commentScore -> commentScore.getScore()).average().orElse(0);
-        findExpert.setScore(averageScore);
-        expertService.save(findExpert);
+        expertService.setScore(findExpert.getId());
+
     }
 
 

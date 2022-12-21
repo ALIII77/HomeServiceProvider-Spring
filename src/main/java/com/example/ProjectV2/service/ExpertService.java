@@ -1,6 +1,7 @@
 package com.example.ProjectV2.service;
 
 import com.example.ProjectV2.entity.Expert;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.Optional;
@@ -30,4 +31,6 @@ public interface ExpertService {
     void selectExpert(Long offerId, Long customerId);
 
 
+
+    void setScore(Long expertId);
 }

@@ -205,4 +205,14 @@ public class ExpertServiceImpl implements ExpertService {
         order.setExpert(findOffer.getExpert());
         orderService.save(order);
     }
+
+    @Transactional
+    @Override
+    public void setScore(Long expertId){
+        Expert findExpert = expertRepository.findById(expertId).orElseThrow(() -> new NotFoundException("not exist expert"));
+        Double averageScore = findExpert.getCommentSet().stream()
+                .mapToDouble(commentScore -> commentScore.getScore()).average().orElse(0);
+        findExpert.setScore(averageScore);
+        expertRepository.save(findExpert);
+    }
 }
