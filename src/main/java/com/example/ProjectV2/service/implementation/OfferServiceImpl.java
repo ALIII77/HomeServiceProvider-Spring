@@ -13,13 +13,17 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @org.springframework.stereotype.Service
 public class OfferServiceImpl implements OfferService {
+    @Autowired
+    ApplicationContext applicationContext ;
     private final OfferRepository offerRepository;
 
 
@@ -42,7 +46,6 @@ public class OfferServiceImpl implements OfferService {
     @Transactional
     @Override
     public void addOffer(Offer offer, Long expertId) {
-        ApplicationContext applicationContext = new AnnotationConfigApplicationContext();
         ExpertService expertService = applicationContext.getBean(ExpertService.class);
         OrderService orderService = applicationContext.getBean(OrderService.class);
         Expert findExpert = expertService.findExpertById(expertId)
@@ -88,10 +91,11 @@ public class OfferServiceImpl implements OfferService {
 
     @Transactional
     @Override
-    public void editOffer(Offer offer, double duration, double price) {
+    public void editOffer(Offer offer, LocalDateTime startDate , LocalDateTime endDate, double price) {
         Offer findOffer = offerRepository.findById(offer.getId())
                 .orElseThrow(() -> new NotFoundException("No exists Offer with id = " + offer.getId()));
-        findOffer.setDuration(duration);
+        findOffer.setStartDate(startDate);
+        findOffer.setEndDate(endDate);
         findOffer.setPrice(price);
         offerRepository.save(offer);
     }
@@ -112,7 +116,7 @@ public class OfferServiceImpl implements OfferService {
             throw new CustomizedIllegalArgumentException(" expert must be confirmed by admin to add offer");
         }
 
-        if (isExistsByOrderIdAndExpertId(order.getId(), offer.getExpert().getId())) {
+        if (isExistsByOrderIdAndExpertId(order.getId(), expert.getId())) {
             throw new CustomizedIllegalArgumentException("this expert is sended offert to this order!!!!!");
         }
     }
