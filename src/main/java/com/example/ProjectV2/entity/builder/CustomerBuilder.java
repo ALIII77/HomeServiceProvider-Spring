@@ -20,7 +20,7 @@ public  class CustomerBuilder {
     private Set<Order> orderSet;
     private Set<Comment> commentSet;
 
-    CustomerBuilder() {
+    public CustomerBuilder() {
     }
 
     public static CustomerBuilder builder() {
