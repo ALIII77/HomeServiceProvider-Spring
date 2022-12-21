@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 
@@ -136,15 +137,17 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void changeOrderStatusToStarted(Order order) {
-        if (order.getOrderStatus() != OrderStatus.COMING_EXPERTS) {
+
+        Order findOrder = orderRepository.findById(order.getId())
+                .orElseThrow(() -> new NotFoundException("Not found order with id = " + order.getId()));
+        if (findOrder.getOrderStatus() != OrderStatus.COMING_EXPERTS) {
             throw new CustomizedIllegalArgumentException
                     ("To set the status of the order to Started, the order must first be in 'COMING EXPERT' status");
         }
-        Order findOrder = orderRepository.findById(order.getId())
-                .orElseThrow(() -> new NotFoundException("Not found order with id = " + order.getId()));
         Offer findOffer = offerService.findOfferByOrderIdAndExpertId(order.getId(), findOrder.getExpert().getId())
                 .orElseThrow(() -> new NotFoundException("Not exists Offer for order with id = " + order.getId()));
-        if (LocalDateTime.now().isAfter(findOffer.getOfferDate())) {
+        if (LocalDateTime.now().isAfter(findOrder.getAcceptedOffer().getStartDate())
+                && LocalDateTime.now().isBefore(findOrder.getAcceptedOffer().getEndDate())) {
             try {
                 findOrder.setOrderStatus(OrderStatus.STARTED);
                 orderRepository.save(findOrder);
@@ -179,25 +182,23 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void changeOrderStatusToDone(Order order, Offer offer) {
-        if (order.getOrderStatus() != OrderStatus.STARTED) {
+        Order findOrder = orderRepository.findById(order.getId())
+                .orElseThrow(() -> new NotFoundException("Not found order with id = " + order.getId()));
+        if (findOrder.getOrderStatus() != OrderStatus.STARTED) {
             throw new CustomizedIllegalArgumentException
                     ("the execution of the order must first be 'STARTED' state , then it  will be change status order to 'DONE' state");
         }
-        Order findOrder = orderRepository.findById(order.getId())
-                .orElseThrow(() -> new NotFoundException("Not found order with id = " + order.getId()));
         Offer findOffer = offerService.findOfferById(offer.getId())
                 .orElseThrow(() -> new NotFoundException("Not found offer with id = " + offer.getId()));
-        if (LocalDateTime.now().isAfter(findOrder.getExecutionDate().plusHours((long) Math.ceil(findOffer.getDuration())))) {
-            try {
-                findOrder.setOrderStatus(OrderStatus.DONE);
-                orderRepository.save(findOrder);
-            } catch (CustomizedIllegalArgumentException exception) {
-                System.out.println(exception.getMessage());
-            }
-        } else {
-            throw new PermissionDeniedException("The registered end time of offer has not yet arrived");
+        long hours = ChronoUnit.HOURS.between(findOffer.getEndDate(), LocalDateTime.now());
+
+        // TODO: 12/21/2022 agar in hours az endtime bishtar bood az emtiaz expert kam beshe!
+
+        try {
+            findOrder.setOrderStatus(OrderStatus.DONE);
+            orderRepository.save(findOrder);
+        } catch (CustomizedIllegalArgumentException exception) {
+            System.out.println(exception.getMessage());
         }
     }
-
-
 }
