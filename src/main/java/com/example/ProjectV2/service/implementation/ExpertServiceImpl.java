@@ -63,6 +63,7 @@ public class ExpertServiceImpl implements ExpertService {
                 expertRepository.save(expert);
             } catch (Exception exception) {
                 System.out.println(exception.getMessage());
+                exception.printStackTrace();
             }
         } else {
             System.out.println("image format not jpg or image size not less than 300KB");
@@ -208,7 +209,7 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Transactional
     @Override
-    public void setScore(Long expertId){
+    public void setScore(Long expertId) {
         Expert findExpert = expertRepository.findById(expertId).orElseThrow(() -> new NotFoundException("not exist expert"));
         Double averageScore = findExpert.getCommentSet().stream()
                 .mapToDouble(commentScore -> commentScore.getScore()).average().orElse(0);

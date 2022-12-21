@@ -44,7 +44,7 @@ public class Expert extends Person {
     @ColumnDefault("0")
     @Column(nullable = false)
     private double score; //average score
-    @Lob
+    //@Lob
     @ToString.Exclude
     private byte[] image;
 

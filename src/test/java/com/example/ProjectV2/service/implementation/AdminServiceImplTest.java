@@ -1,20 +1,19 @@
 package com.example.ProjectV2.service.implementation;
 
-import com.example.ProjectV2.entity.Admin;
-import com.example.ProjectV2.entity.Customer;
-import com.example.ProjectV2.entity.Service;
-import com.example.ProjectV2.entity.SubService;
+import com.example.ProjectV2.entity.*;
 import com.example.ProjectV2.entity.builder.*;
-import com.example.ProjectV2.service.AdminService;
-import com.example.ProjectV2.service.CustomerService;
-import com.example.ProjectV2.service.ServiceService;
-import com.example.ProjectV2.service.SubServiceService;
+import com.example.ProjectV2.service.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -34,9 +33,8 @@ class AdminServiceImplTest {
     @Autowired
     private CustomerService customerService;
 
-
-
-
+    @Autowired
+    private ExpertService expertService;
 
 
     //ADMIN
@@ -44,8 +42,9 @@ class AdminServiceImplTest {
     Admin admin2;
 
 
-
-
+    //EXPERT
+    Expert expert1;
+    Expert expert2;
 
 
     //SERVICE
@@ -53,21 +52,14 @@ class AdminServiceImplTest {
     Service service2;
 
 
-
     //SUB SERVICE
     SubService subService11;
     SubService subService12;
 
 
-
     //CUSTOMER
     Customer customer1;
     Customer customer2;
-
-
-
-
-
 
 
     @BeforeEach
@@ -81,13 +73,17 @@ class AdminServiceImplTest {
                 .username("a.amiri").password("aa123456").build();
 
 
+/*        expert1 = new Expert("Omid","Nobahari"
+                ,"o.nobahari@gmail.com","o.nobahari","on123456",null);*/
+
+        //EXPERT
+        expert1 = new ExpertBuilder().firstName("Omid").lastName("Nobahari").email("o.nobahari@gmail.com")
+                .username("o.nobahari").password("on123456").image(null).build();
+
 
         //SERVICE
         service1 = new ServiceBuilder().name("Building Decoration").build();
         service2 = new ServiceBuilder().name("Hygiene").build();
-
-
-
 
 
         //SUB SERVICE
@@ -95,8 +91,6 @@ class AdminServiceImplTest {
                 .basePrice(2500000).build();
         subService12 = new SubServiceBuilder().name("Cabinet").description("Kitchen MDF Cabinet Designing Up To 10 Meter")
                 .basePrice(21000000).build();
-
-
 
 
         //CUSTOMER
@@ -107,16 +101,7 @@ class AdminServiceImplTest {
                 .username("d.farokhi").password("df123456").build();
 
 
-
-
-
     }
-
-
-
-
-
-
 
 
     @Test
@@ -207,12 +192,16 @@ class AdminServiceImplTest {
 
     @Test
     void addExpert() {
+        adminService.addExpert(expert1);
+        Assertions.assertEquals(expert1, expertService.findExpertByUsername(expert1.getUsername()).get());
 
 
     }
 
     @Test
     void addExpertWithPicture() {
+        adminService.addExpertWithPicture(expertService.findExpertByUsername(expert1.getUsername()).get()
+                ,new File("G:\\Picture\\3068450.jpg"));
     }
 
     @Test
@@ -229,5 +218,12 @@ class AdminServiceImplTest {
 
     @Test
     void deleteSubService() {
+    }
+
+    @Test
+    void findExpertByUsername() throws IOException {
+        Expert expert = expertService.findExpertByUsername(expert1.getUsername()).get();
+        Assertions.assertTrue(Arrays.equals(expert.getImage()
+                ,Files.readAllBytes(Paths.get("G:\\Picture\\3068450.jpg"))));
     }
 }
