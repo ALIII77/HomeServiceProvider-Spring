@@ -203,6 +203,7 @@ public class ExpertServiceImpl implements ExpertService {
             throw new CustomizedIllegalArgumentException();
         }
         order.setOrderStatus(OrderStatus.COMING_EXPERTS);
+        order.setAcceptedOffer(findOffer);
         order.setExpert(findOffer.getExpert());
         orderService.save(order);
     }
