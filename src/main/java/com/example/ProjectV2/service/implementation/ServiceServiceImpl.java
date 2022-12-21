@@ -35,8 +35,10 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public Service save(@Valid Service service) {
         try {
-            for (SubService s : service.getSubServices()) {
-                s.setService(service);
+            if (service.getSubServices()!=null){
+                for (SubService s : service.getSubServices()) {
+                    s.setService(service);
+                }
             }
             return serviceRepository.save(service);
         } catch (CustomizedIllegalArgumentException exception) {

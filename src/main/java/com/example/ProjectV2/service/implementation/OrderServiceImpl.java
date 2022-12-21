@@ -23,17 +23,16 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CustomerService customerService;
     private final SubServiceService subServiceService;
-    private final OrderService orderService;
     private final OfferService offerService;
 
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, CustomerService customerService, SubServiceService subServiceService, OrderService orderService, OfferService offerService) {
+    public OrderServiceImpl(OrderRepository orderRepository, CustomerService customerService
+            , SubServiceService subServiceService, OfferService offerService) {
 
         this.orderRepository = orderRepository;
         this.customerService = customerService;
         this.subServiceService = subServiceService;
-        this.orderService = orderService;
         this.offerService = offerService;
     }
 
@@ -76,11 +75,6 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setExecutionDate(LocalDateTime.now());
         orderRepository.save(newOrder);
 
-        findSubService.addOrder(newOrder);
-        subServiceService.save(findSubService);
-
-        findCustomer.addOrder(newOrder);
-        customerService.save(findCustomer);
     }
 
     @Override
@@ -146,14 +140,14 @@ public class OrderServiceImpl implements OrderService {
             throw new CustomizedIllegalArgumentException
                     ("To set the status of the order to Started, the order must first be in 'COMING EXPERT' status");
         }
-        Order findOrder = orderService.findOrderById(order.getId())
+        Order findOrder = orderRepository.findById(order.getId())
                 .orElseThrow(() -> new NotFoundException("Not found order with id = " + order.getId()));
         Offer findOffer = offerService.findOfferByOrderIdAndExpertId(order.getId(), findOrder.getExpert().getId())
                 .orElseThrow(() -> new NotFoundException("Not exists Offer for order with id = " + order.getId()));
         if (LocalDateTime.now().isAfter(findOffer.getOfferDate())) {
             try {
                 findOrder.setOrderStatus(OrderStatus.STARTED);
-                orderService.save(findOrder);
+                orderRepository.save(findOrder);
             } catch (CustomizedIllegalArgumentException exception) {
                 System.out.println(exception.getMessage());
             }
@@ -189,14 +183,14 @@ public class OrderServiceImpl implements OrderService {
             throw new CustomizedIllegalArgumentException
                     ("the execution of the order must first be 'STARTED' state , then it  will be change status order to 'DONE' state");
         }
-        Order findOrder = orderService.findOrderById(order.getId())
+        Order findOrder = orderRepository.findById(order.getId())
                 .orElseThrow(() -> new NotFoundException("Not found order with id = " + order.getId()));
         Offer findOffer = offerService.findOfferById(offer.getId())
                 .orElseThrow(() -> new NotFoundException("Not found offer with id = " + offer.getId()));
         if (LocalDateTime.now().isAfter(findOrder.getExecutionDate().plusHours((long) Math.ceil(findOffer.getDuration())))) {
             try {
                 findOrder.setOrderStatus(OrderStatus.DONE);
-                orderService.save(findOrder);
+                orderRepository.save(findOrder);
             } catch (CustomizedIllegalArgumentException exception) {
                 System.out.println(exception.getMessage());
             }

@@ -11,6 +11,8 @@ import com.example.ProjectV2.repository.OfferRepository;
 import com.example.ProjectV2.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,15 +21,11 @@ import java.util.Optional;
 @org.springframework.stereotype.Service
 public class OfferServiceImpl implements OfferService {
     private final OfferRepository offerRepository;
-    private final ExpertService expertService;
-    private final OrderService orderService;
 
 
     @Autowired
-    public OfferServiceImpl(OfferRepository offerRepository, ExpertService expertService, OrderService orderService) {
+    public OfferServiceImpl(OfferRepository offerRepository) {
         this.offerRepository = offerRepository;
-        this.expertService = expertService;
-        this.orderService = orderService;
     }
 
     @Transactional
@@ -44,7 +42,9 @@ public class OfferServiceImpl implements OfferService {
     @Transactional
     @Override
     public void addOffer(Offer offer, Long expertId) {
-
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext();
+        ExpertService expertService = applicationContext.getBean(ExpertService.class);
+        OrderService orderService = applicationContext.getBean(OrderService.class);
         Expert findExpert = expertService.findExpertById(expertId)
                 .orElseThrow(() -> new NotFoundException("Not exists expert to create a offer to an order"));
         Order findOrder = orderService.findOrderById(offer.getOrder().getId())
