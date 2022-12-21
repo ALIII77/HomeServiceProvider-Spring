@@ -2,10 +2,8 @@ package com.example.ProjectV2.service.implementation;
 
 import com.example.ProjectV2.entity.*;
 import com.example.ProjectV2.entity.builder.*;
-import com.example.ProjectV2.service.CustomerService;
-import com.example.ProjectV2.service.ExpertService;
-import com.example.ProjectV2.service.OrderService;
-import com.example.ProjectV2.service.SubServiceService;
+import com.example.ProjectV2.enums.OrderStatus;
+import com.example.ProjectV2.service.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +28,9 @@ class CustomerServiceImplTest {
 
     @Autowired
     private SubServiceService subServiceService;
+
+    @Autowired
+    private OfferService offerService;
 
     @Autowired
     private ExpertService expertService;
@@ -148,6 +149,8 @@ class CustomerServiceImplTest {
 
     @Test
     void selectExpert() {
+        expertService.selectExpert(1L,customerService.findCustomerByUsername(customer1.getUsername()).get().getId());
+        Assertions.assertEquals(OrderStatus.COMING_EXPERTS,orderService.findOrderById(2L).get().getOrderStatus());
     }
 
     @Test
