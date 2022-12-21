@@ -13,10 +13,9 @@ public  class OfferBuilder {
     private Expert expert;
     private LocalDateTime offerDate;
     private double price;
-    private double duration;
     private Order order;
 
-    OfferBuilder() {
+    public OfferBuilder() {
     }
     public static OfferBuilder builder() {
         return new OfferBuilder();
@@ -37,21 +36,17 @@ public  class OfferBuilder {
         return this;
     }
 
-    public OfferBuilder duration(double duration) {
-        this.duration = duration;
-        return this;
-    }
-
     public OfferBuilder order(Order order) {
         this.order = order;
         return this;
     }
 
     public Offer build() {
-        return new Offer(expert, offerDate, price, duration, order);
+        return new Offer(expert, offerDate, price, order);
     }
 
     public String toString() {
-        return "Offer.OfferBuilder(expert=" + this.expert + ", offerDate=" + this.offerDate + ", price=" + this.price + ", duration=" + this.duration + ", order=" + this.order + ")";
+        return "Offer.OfferBuilder(expert=" + this.expert + ", offerDate=" + this.offerDate + ", price="
+                + this.price + ", order=" + this.order + ")";
     }
 }

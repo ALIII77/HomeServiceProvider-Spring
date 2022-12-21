@@ -4,6 +4,7 @@ import com.example.ProjectV2.base.BaseEntity;
 import com.example.ProjectV2.enums.OrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.rmi.Remote;
@@ -33,6 +34,9 @@ public class Order extends BaseEntity<Long> {
 
     @NotNull
     private LocalDateTime executionDate;
+
+
+    private double delay;
 
     @NotNull
     private String address;
@@ -117,7 +121,7 @@ public class Order extends BaseEntity<Long> {
         Order order = (Order) o;
         return Double.compare(order.proposedPrice, proposedPrice) == 0 && Objects.equals(customer, order.customer)
                 && Objects.equals(expert, order.expert) && Objects.equals(jobDescription, order.jobDescription)
-                && Objects.equals(executionDate, order.executionDate) && Objects.equals(address, order.address)
+                && Objects.equals(address, order.address)
                 && orderStatus == order.orderStatus && Objects.equals(subService, order.subService)
                 && Objects.equals(comment, order.comment);
     }

@@ -15,7 +15,7 @@ public class CommentBuilder {
     private double score;
     private Order order;
 
-    CommentBuilder() {
+    public CommentBuilder() {
     }
     public static CommentBuilder builder() {
         return new CommentBuilder();
