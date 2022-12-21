@@ -14,7 +14,7 @@ public  class AdminBuilder {
     private String password;
     private LocalDateTime dateOfRegistration;
 
-    AdminBuilder() {
+    public AdminBuilder() {
     }
 
     public static AdminBuilder builder() {

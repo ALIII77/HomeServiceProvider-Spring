@@ -10,7 +10,7 @@ public  class ServiceBuilder {
     private String name;
     private Set<SubService> subServices;
 
-    ServiceBuilder() {
+    public ServiceBuilder() {
     }
     public static ServiceBuilder builder() {
         return new ServiceBuilder();
