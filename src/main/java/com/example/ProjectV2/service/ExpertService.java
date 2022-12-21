@@ -1,11 +1,13 @@
 package com.example.ProjectV2.service;
 
 import com.example.ProjectV2.entity.Expert;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.Optional;
 
+@Service
 public interface ExpertService {
 
     Expert save(Expert expert);
