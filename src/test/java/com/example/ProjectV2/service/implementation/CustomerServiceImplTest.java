@@ -68,13 +68,9 @@ class CustomerServiceImplTest {
                 .username("m.yousefi").password("my123457").build();
 
 
-
-
         //SUB SERVICE
 //        subService11 = new SubServiceBuilder().name("FirePlace").description("Design With Ornamental Stone")
 //                .basePrice(2500000).build();
-
-
 
 
         //ORDER
@@ -84,13 +80,8 @@ class CustomerServiceImplTest {
                 .build();
 
 
-
-
         //EXPERT
 //        expert1 = expertService.findExpertByUsername("o.nobahari").get();
-
-
-
 
 
         //OFFER
@@ -99,8 +90,6 @@ class CustomerServiceImplTest {
 //                .order(orderService.findOrderById(5L).get())
 //                .price(25200000)
 //                .build();
-
-
 
 
         //COMMENT
@@ -165,28 +154,53 @@ class CustomerServiceImplTest {
 
     @Test
     void changeOrderStatusToDone() {
-        orderService.changeOrderStatusToDone(orderService.findOrderById(2L).get(),offerService.findOfferById(1L).get());
-        Assertions.assertEquals(OrderStatus.DONE,orderService.findOrderById(2L).get().getOrderStatus());
+
+        orderService.changeOrderStatusToDone(orderService.findOrderById(2L).get(), offerService.findOfferById(1L).get());
+        Assertions.assertEquals(OrderStatus.DONE, orderService.findOrderById(2L).get().getOrderStatus());
+
     }
+
     @Test
-    void findAllOfferOneOrderByExpertScore(){
-        Order findOrder = orderService.findOrderById(3L).get();
-        List<Offer> findOfferList1 = offerService.findAllOfferOneOrderByExpertScore(3L);
+    void findAllOfferOneOrderByExpertScore() {
+
+        Order findOrder = orderService.findOrderById(2L).get();
+        List<Offer> findOfferList1 = offerService.findAllOfferOneOrderByExpertScore(2L);
         List<Offer> findOfferList2 = new ArrayList<>(findOrder.getOfferSet());
         Comparator<Double> comparator = (d1, d2) -> Double.compare(d2, d1);
         findOfferList2 = findOfferList2.stream()
                 .sorted(Comparator.comparing((offer -> offer.getExpert().getScore()), comparator)).toList();
         Assertions.assertEquals(findOfferList2, findOfferList1);
-        System.out.println(findOfferList2);
+        System.out.println("***********************************************************************");
+        System.out.println("***********************************************************************");
+        System.out.println("***********************************************************************");
+        System.out.println("***********************************************************************");
+        for (Offer o : findOfferList1) {
+            System.out.println(o);
+        }
+//        System.out.println(findOfferList2);
+
+
     }
 
     @Test
-    void findAllOfferOneOrderByPrice(){
-        Order findOrder = orderService.findOrderById(1L).get();
-        List<Offer> findOfferList1 = offerService.findAllOfferOneOrderByPrice(1L);
+    void findAllOfferOneOrderByPrice() {
+
+        Order findOrder = orderService.findOrderById(2L).get();
+        List<Offer> findOfferList1 = offerService.findAllOfferOneOrderByPrice(2L);
         List<Offer> findOfferList2 = new ArrayList<>(findOrder.getOfferSet());
         findOfferList2 = findOfferList2.stream().sorted(Comparator.comparing((offer -> offer.getPrice()))).toList();
         Assertions.assertEquals(findOfferList2, findOfferList1);
+
+        System.out.println("***********************************************************************");
+        System.out.println("***********************************************************************");
+        System.out.println("***********************************************************************");
+        System.out.println("***********************************************************************");
+
+        for (Offer o : findOfferList2) {
+            System.out.println(o);
+        }
+
+
     }
 
 }
