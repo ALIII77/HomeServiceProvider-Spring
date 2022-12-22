@@ -37,7 +37,6 @@ public class OrderServiceImpl implements OrderService {
         this.offerService = offerService;
     }
 
-
     @Transactional
     @Override
     public void save(@Valid Order order) {
