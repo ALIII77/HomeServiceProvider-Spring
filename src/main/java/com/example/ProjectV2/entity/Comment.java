@@ -2,10 +2,7 @@ package com.example.ProjectV2.entity;
 
 
 import com.example.ProjectV2.base.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -38,6 +35,7 @@ public class Comment extends BaseEntity<Long> {
     private double score;
 
     @OneToOne(mappedBy = "comment")
+
     @ToString.Exclude
     private Order order;
 
@@ -61,13 +59,13 @@ public class Comment extends BaseEntity<Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Comment comment = (Comment) o;
-        return Double.compare(comment.score, score) == 0 && Objects.equals(customer, comment.customer)
-                && Objects.equals(expert, comment.expert) && Objects.equals(text, comment.text)
-                && Objects.equals(order, comment.order);
+        return Double.compare(comment.score, score) == 0
+                && Objects.equals(text, comment.text)
+                && Objects.equals(id, comment.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(customer, expert, text, score, order);
+        return Objects.hash( text, score, order);
     }
 }

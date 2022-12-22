@@ -35,6 +35,9 @@ class CustomerServiceImplTest {
     @Autowired
     private ExpertService expertService;
 
+    @Autowired
+    private CommentService commentService;
+
 
     //CUSTOMER
     Customer customer1;
@@ -81,7 +84,7 @@ class CustomerServiceImplTest {
 
 
         //EXPERT
-//        expert1 = expertService.findExpertByUsername("o.nobahari").get();
+        expert1 = expertService.findExpertByUsername("o.nobahari").get();
 
 
         //OFFER
@@ -92,11 +95,14 @@ class CustomerServiceImplTest {
 //                .build();
 
 
-        //COMMENT
-//        comment1 = new CommentBuilder().customer(customerService.findCustomerByUsername("m.yousefi").get())
-//                .expert()
-//                .build();
-
+//        COMMENT
+        comment1 = new CommentBuilder()
+                .customer(customerService.findCustomerByUsername("m.yousefi").get())
+                .expert(expertService.findExpertByUsername("o.nobahari").get())
+                .order(orderService.findOrderById(2L).get())
+                .score(4)
+                .text("Perfect!!")
+                .build();
 
     }
 
@@ -125,7 +131,19 @@ class CustomerServiceImplTest {
 
     @Test
     void addComment() {
+//                customer1 = customerService.findCustomerByUsername(customer1.getUsername()).orElse(null);
+//        commentService.addComment(.getUsername(), 3L, 1, "I regretted", "m.nosrati");
+//        comment = commentService.findCommentById(7L).orElse(null);
+//        Assertions.assertEquals(customer1.getUsername(), comment.getCustomer().getUsername());
 
+        commentService.addComment(comment1,orderService.findOrderById(2L).get().getId());
+        Assertions.assertEquals(comment1,commentService.findCommentById(13L).get());
+
+
+
+
+//        commentService.addComment(comment1,order1.getId());
+//        Assertions.assertEquals(comment1,commentService.findCommentById(1L).get());
     }
 
     @Test

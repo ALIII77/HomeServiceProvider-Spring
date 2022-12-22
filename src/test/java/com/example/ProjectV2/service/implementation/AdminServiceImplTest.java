@@ -104,7 +104,7 @@ class AdminServiceImplTest {
 
         //SERVICE
 //        service1 = new ServiceBuilder().name("Building Decoration").build();
-        service2 = new ServiceBuilder().name("Hygiene").build();
+//        service2 = new ServiceBuilder().name("Hygiene").build();
 
 //        serviceList.add(serviceService.findServiceByName("Building Decoration").get());
 //        serviceList.add(serviceService.findServiceByName("Hygiene").get());

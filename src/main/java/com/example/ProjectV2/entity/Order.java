@@ -122,12 +122,11 @@ public class Order extends BaseEntity<Long> {
         return Double.compare(order.proposedPrice, proposedPrice) == 0 && Objects.equals(customer, order.customer)
                 && Objects.equals(expert, order.expert) && Objects.equals(jobDescription, order.jobDescription)
                 && Objects.equals(address, order.address)
-                && orderStatus == order.orderStatus && Objects.equals(subService, order.subService)
-                && Objects.equals(comment, order.comment);
+                && orderStatus == order.orderStatus && Objects.equals(subService, order.subService);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(customer, expert, jobDescription, executionDate, address, proposedPrice, orderStatus, subService, comment);
+        return Objects.hash(customer, expert, jobDescription, executionDate, address, proposedPrice, orderStatus, subService);
     }
 }
