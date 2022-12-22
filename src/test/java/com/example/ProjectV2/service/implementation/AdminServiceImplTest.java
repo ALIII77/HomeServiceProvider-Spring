@@ -14,7 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -54,6 +56,8 @@ class AdminServiceImplTest {
     //SERVICE
     Service service1;
     Service service2;
+
+    List<Service> serviceList = new ArrayList<>();
 
 
     //SUB SERVICE
@@ -96,6 +100,9 @@ class AdminServiceImplTest {
         //SERVICE
 //        service1 = new ServiceBuilder().name("Building Decoration").build();
 //        service2 = new ServiceBuilder().name("Hygiene").build();
+
+//        serviceList.add(serviceService.findServiceByName("Building Decoration").get());
+//        serviceList.add(serviceService.findServiceByName("Hygiene").get());
 
 
         //SUB SERVICE
@@ -178,6 +185,7 @@ class AdminServiceImplTest {
 
     @Test
     void showAllServices() {
+        Assertions.assertEquals(serviceList, adminService.showAllServices());
     }
 
 
@@ -237,7 +245,6 @@ class AdminServiceImplTest {
 //
 //        adminService.addExpert(expert4);
 //        Assertions.assertEquals(expert4, expertService.findExpertByUsername(expert4.getUsername()).get());
-
 
 
 //        adminService.addExpert(expert5);
