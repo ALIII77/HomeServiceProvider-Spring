@@ -9,7 +9,7 @@ import com.example.ProjectV2.entity.Order;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-public  class CustomerBuilder {
+public class CustomerBuilder {
     private String firstName;
     private String lastName;
     private String email;

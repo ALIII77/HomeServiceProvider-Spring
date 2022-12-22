@@ -3,12 +3,14 @@ package com.example.ProjectV2.service.implementation;
 import com.example.ProjectV2.entity.*;
 import com.example.ProjectV2.entity.builder.*;
 import com.example.ProjectV2.enums.ExpertStatus;
+import com.example.ProjectV2.repository.SubServiceRepository;
 import com.example.ProjectV2.service.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +24,6 @@ import java.util.Objects;
 
 @SpringBootTest
 class AdminServiceImplTest {
-
 
     @Autowired
     private AdminService adminService;
@@ -38,6 +39,9 @@ class AdminServiceImplTest {
 
     @Autowired
     private ExpertService expertService;
+
+    @Autowired
+    private SubServiceRepository subServiceRepository;
 
 
     //ADMIN
@@ -66,6 +70,7 @@ class AdminServiceImplTest {
     SubService subService21;
     SubService subService22;
     SubService subService23;
+    SubService subService24;
 
 
     //CUSTOMER
@@ -99,7 +104,7 @@ class AdminServiceImplTest {
 
         //SERVICE
 //        service1 = new ServiceBuilder().name("Building Decoration").build();
-//        service2 = new ServiceBuilder().name("Hygiene").build();
+        service2 = new ServiceBuilder().name("Hygiene").build();
 
 //        serviceList.add(serviceService.findServiceByName("Building Decoration").get());
 //        serviceList.add(serviceService.findServiceByName("Hygiene").get());
@@ -116,6 +121,8 @@ class AdminServiceImplTest {
 //                .basePrice(700000).build();
 //        subService23 = new SubServiceBuilder().name("xx yy").description("xy")                              //for delete
 //                .basePrice(111111).build();
+//        subService24 = new SubServiceBuilder().name("xxz yyz").description("xyz")                              //for delete
+//                .basePrice(1333311).build();
 
 
         //CUSTOMER
@@ -177,9 +184,12 @@ class AdminServiceImplTest {
 //        Assertions.assertTrue(serviceService.findServiceByName(service2.getName()).get()
 //                .getSubServices().contains(subService22));
 //
-//        adminService.createNewSubService(service2.getName(), subService23);
+//        adminService.createNewSubService(serviceService.findServiceByName(service2.getName()).get().getName(), subService23);
 //        Assertions.assertTrue(serviceService.findServiceByName(service2.getName()).get()
 //                .getSubServices().contains(subService23));
+//        adminService.createNewSubService(serviceService.findServiceByName(service2.getName()).get().getName(), subService24);
+//        Assertions.assertTrue(serviceService.findServiceByName(service2.getName()).get()
+//                .getSubServices().contains(subService24));
 
     }
 
@@ -312,11 +322,10 @@ class AdminServiceImplTest {
 
 
     @Test
-    void deleteSubService() {              //fail
+    void deleteSubService() {
 
-//        adminService.deleteSubService(subServiceService.findSubServiceByName("xx yy").get());
-//        Assertions.assertFalse(serviceService.findServiceByName(service2.getName()).get()
-//                .getSubServices().contains(subService23));
+//        subServiceService.deleteSubService(subServiceService.findSubServiceByName("xxz yyz").get());
+//        Assertions.assertNull(subServiceService.findSubServiceByName("xxz yyz").orElse(null));
 
     }
 

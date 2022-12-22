@@ -119,11 +119,8 @@ public class SubServiceServiceImpl implements SubServiceService {
 
     @Override
     public Optional<SubService> findSubServiceByName(String subServiceName) {
-        Optional<SubService> subServiceOptional = subServiceRepository.findSubServiceByName(subServiceName);
-        if (subServiceOptional.isEmpty()) {
-            throw new NotFoundException("Not found sub service " + subServiceName + " sub service name");
-        }
-        return subServiceOptional;
+        return  subServiceRepository.findSubServiceByName(subServiceName);
+
     }
 
 
@@ -137,9 +134,9 @@ public class SubServiceServiceImpl implements SubServiceService {
     @Override
     public void deleteSubService(SubService subService) {
         try {
-            subServiceRepository.deleteById(subService.getId());
+            subServiceRepository.deleteSubServiceById(subService.getId());
         } catch (Exception exception) {
-            System.out.println(exception.getMessage());
+            exception.printStackTrace();
         }
     }
 

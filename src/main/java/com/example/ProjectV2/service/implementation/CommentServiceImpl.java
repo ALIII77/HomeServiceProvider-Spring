@@ -91,10 +91,8 @@ public class CommentServiceImpl implements CommentService {
         if (findOrder.getOrderStatus() != OrderStatus.PAID) {
             throw new CustomizedIllegalArgumentException(" Order must be Paid state ! ");
         }
-
         newComment.setOrder(findOrder);
         commentRepository.save(newComment);
-
         expertService.setScore(findExpert.getId());
 
     }

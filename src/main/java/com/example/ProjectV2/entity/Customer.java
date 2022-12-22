@@ -36,7 +36,6 @@ public class Customer extends Person {
     }
 
 
-
     public void addOrder(Order order) {
         if (orderSet == null) {
             this.orderSet = new HashSet<>();

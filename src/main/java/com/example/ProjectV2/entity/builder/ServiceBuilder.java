@@ -6,12 +6,13 @@ import com.example.ProjectV2.entity.SubService;
 
 import java.util.Set;
 
-public  class ServiceBuilder {
+public class ServiceBuilder {
     private String name;
     private Set<SubService> subServices;
 
     public ServiceBuilder() {
     }
+
     public static ServiceBuilder builder() {
         return new ServiceBuilder();
     }

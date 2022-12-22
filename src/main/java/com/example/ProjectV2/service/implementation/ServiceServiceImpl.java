@@ -35,7 +35,7 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public Service save(@Valid Service service) {
         try {
-            if (service.getSubServices()!=null){
+            if (service.getSubServices() != null) {
                 for (SubService s : service.getSubServices()) {
                     s.setService(service);
                 }

@@ -9,8 +9,7 @@ import com.example.ProjectV2.entity.SubService;
 import java.util.Set;
 
 
-
-public  class SubServiceBuilder {
+public class SubServiceBuilder {
     private String name;
     private Service service;
     private String description;

@@ -7,7 +7,6 @@ import com.example.ProjectV2.entity.Expert;
 import com.example.ProjectV2.entity.Order;
 
 
-
 public class CommentBuilder {
     private Customer customer;
     private Expert expert;
@@ -17,6 +16,7 @@ public class CommentBuilder {
 
     public CommentBuilder() {
     }
+
     public static CommentBuilder builder() {
         return new CommentBuilder();
     }

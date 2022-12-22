@@ -7,7 +7,7 @@ import com.example.ProjectV2.enums.ExpertStatus;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-public  class ExpertBuilder {
+public class ExpertBuilder {
     private String firstName;
     private String lastName;
     private String email;

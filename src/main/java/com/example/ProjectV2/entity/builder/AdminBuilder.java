@@ -5,7 +5,7 @@ import com.example.ProjectV2.entity.Admin;
 import java.time.LocalDateTime;
 
 
-public  class AdminBuilder {
+public class AdminBuilder {
 
     private String firstName;
     private String lastName;

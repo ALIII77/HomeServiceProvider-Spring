@@ -21,6 +21,7 @@ public class OrderBuilder {
 
     public OrderBuilder() {
     }
+
     public static OrderBuilder builder() {
         return new OrderBuilder();
     }

@@ -8,8 +8,7 @@ import com.example.ProjectV2.entity.Order;
 import java.time.LocalDateTime;
 
 
-
-public  class OfferBuilder {
+public class OfferBuilder {
     private Expert expert;
     private LocalDateTime offerDate;
     private double price;
@@ -17,6 +16,7 @@ public  class OfferBuilder {
 
     public OfferBuilder() {
     }
+
     public static OfferBuilder builder() {
         return new OfferBuilder();
     }

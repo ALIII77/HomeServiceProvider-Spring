@@ -26,6 +26,6 @@ public interface OfferService {
 
     boolean isExistsByOrderIdAndExpertId(Long orderId, Long expertId);
 
-    void editOffer(Offer offer, LocalDateTime startDate , LocalDateTime endDate, double price);
+    void editOffer(Offer offer, LocalDateTime startDate, LocalDateTime endDate, double price);
 
 }

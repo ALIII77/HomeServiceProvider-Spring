@@ -18,6 +18,10 @@ public interface CustomerService {
 
     Optional<Customer> findById(Long id);
 
+    List<Service> showAllServices();
+
+    List<SubService> showAllSubServiceByService(Service service);
+
 /*
     void addOrder(String customerUsername, String description, double purposedPrice, String address, String subServiceName);
 */
@@ -26,14 +30,10 @@ public interface CustomerService {
     void addComment(String customerName,Long orderId,double score,String comment,String expertUsername);
 */
 
-    List<Service> showAllServices();
-
-    List<SubService> showAllSubServiceByService(Service service);
-
-
 /*
     void changeOrderStatusToStarted(Long orderId); //
 */
+
 /*
     void changeOrderStatusToStarted(Order order);//
 */
@@ -41,6 +41,7 @@ public interface CustomerService {
 /*
     void changeOrderStatusToDone(Long orderId ,Long offerId);
 */
+
 /*
     void changeOrderStatusToDone(Order order, Offer offer);
 */

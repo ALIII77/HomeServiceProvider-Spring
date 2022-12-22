@@ -23,7 +23,7 @@ import java.util.Optional;
 @org.springframework.stereotype.Service
 public class OfferServiceImpl implements OfferService {
     @Autowired
-    ApplicationContext applicationContext ;
+    ApplicationContext applicationContext;
     private final OfferRepository offerRepository;
 
 
@@ -91,7 +91,7 @@ public class OfferServiceImpl implements OfferService {
 
     @Transactional
     @Override
-    public void editOffer(Offer offer, LocalDateTime startDate , LocalDateTime endDate, double price) {
+    public void editOffer(Offer offer, LocalDateTime startDate, LocalDateTime endDate, double price) {
         Offer findOffer = offerRepository.findById(offer.getId())
                 .orElseThrow(() -> new NotFoundException("No exists Offer with id = " + offer.getId()));
         findOffer.setStartDate(startDate);
