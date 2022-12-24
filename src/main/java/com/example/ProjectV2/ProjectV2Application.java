@@ -18,9 +18,11 @@ import java.time.LocalDateTime;
 public class ProjectV2Application {
     public static void main(String[] args) {
 
-        ConfigurableApplicationContext run = SpringApplication.run(ProjectV2Application.class, args);
-        run.getBean(EntityManager.class);
-        ExpertService expertService = run.getBean(ExpertService.class);
+        SpringApplication.run(ProjectV2Application.class,args);
+
+//        ConfigurableApplicationContext run = SpringApplication.run(ProjectV2Application.class, args);
+//        run.getBean(EntityManager.class);
+//        ExpertService expertService = run.getBean(ExpertService.class);
     }
 
 }
