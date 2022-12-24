@@ -143,8 +143,6 @@ public class OrderServiceImpl implements OrderService {
             throw new CustomizedIllegalArgumentException
                     ("To set the status of the order to Started, the order must first be in 'COMING EXPERT' status");
         }
-        Offer findOffer = offerService.findOfferByOrderIdAndExpertId(order.getId(), findOrder.getExpert().getId())
-                .orElseThrow(() -> new NotFoundException("Not exists Offer for order with id = " + order.getId()));
         if (LocalDateTime.now().isAfter(findOrder.getAcceptedOffer().getStartDate())
                 && LocalDateTime.now().isBefore(findOrder.getAcceptedOffer().getEndDate())) {
             try {
