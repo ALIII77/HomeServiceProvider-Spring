@@ -94,8 +94,8 @@ class AdminServiceImplTest {
 //                .username("o.nobahari").password("on123456").image(null).build();
 //        expert2 = new ExpertBuilder().firstName("Morteza").lastName("Mirani").email("m.mirani@gmail.com")
 //                .username("m.mirani").password("mm123456").image(null).build();
-//        expert3 = new ExpertBuilder().firstName("Hasan").lastName("Tabrizi").email("h.tabrizi@gmail.com")
-//                .username("h.tabrizi").password("ht123456").image(null).build();
+        expert3 = new ExpertBuilder().firstName("Hasan").lastName("Tabrizi").email("h.tabrizi@gmail.com")
+                .username("h.tabrizi").password("ht123456").image(null).build();
 //        expert4 = new ExpertBuilder().firstName("Mohamad").lastName("Kermani").email("m.kermani@gmail.com")
 //                .username("m.kermani").password("mk123456").image(null).build();
 //        expert5 = new ExpertBuilder().firstName("xxxx").lastName("xxxx").email("x.xxxxx@gmail.com")         //for delete
@@ -195,7 +195,7 @@ class AdminServiceImplTest {
 
     @Test
     void showAllServices() {
-        Assertions.assertEquals(serviceList, adminService.showAllServices());
+//        Assertions.assertEquals(serviceList, adminService.showAllServices());
     }
 
 
@@ -267,8 +267,8 @@ class AdminServiceImplTest {
     void addExpertWithPicture() {
 
 
-//        adminService.addExpertWithPicture(expertService.findExpertByUsername(expert1.getUsername()).get()
-//                ,new File("G:\\Picture\\3068450.jpg"));
+        adminService.addExpertWithPicture(expertService.findExpertByUsername(expert3.getUsername()).get()
+                ,new File("G:\\Picture\\3068450.jpg"));
 
 
     }
