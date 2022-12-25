@@ -93,6 +93,16 @@ public class Order extends BaseEntity<Long> {
         offerSet.add(offer);
     }
 
+
+    public Order(Customer customer, String jobDescription, LocalDateTime executionDate, String address, double proposedPrice, SubService subService) {
+        this.customer = customer;
+        this.jobDescription = jobDescription;
+        this.executionDate = executionDate;
+        this.address = address;
+        this.proposedPrice = proposedPrice;
+        this.subService = subService;
+    }
+
     public Order(Customer customer, Expert expert, String jobDescription, LocalDateTime executionDate
             , String address, double proposedPrice, OrderStatus orderStatus, Set<Offer> offerSet, SubService subService, Comment comment) {
         this.customer = customer;
