@@ -37,12 +37,7 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     @Override
     public Admin save(@Valid Admin admin) {
-        try {
-            return adminRepository.save(admin);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
-        }
-        return null;
+         return adminRepository.save(admin);
     }
 
     @Transactional
