@@ -79,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void addOrder(Order order, Long customerId, String subServiceName) {         //test fail
+    public void addOrder(Order order, Long customerId, String subServiceName) {
         Customer findCustomer = customerService.findById(customerId)
                 .orElseThrow(() -> new NotFoundException("Not found customer to create an order"));
         SubService findSubService = subServiceService.findSubServiceByName(subServiceName)
