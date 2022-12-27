@@ -1,9 +1,7 @@
 package com.example.ProjectV2.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import com.example.ProjectV2.enums.PersonType;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -24,7 +22,7 @@ public class Customer extends Person {
     private Credit credit;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE) //bidirectional
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
     private Set<Order> orderSet;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
@@ -57,6 +55,15 @@ public class Customer extends Person {
         this.orderSet = orderSet;
         this.commentSet = commentSet;
     }
+
+
+
+    @PrePersist
+    public void prePersist(){
+        setPersonType(PersonType.CUSTOMER);
+    }
+
+
 
 
     //Equals And HashCode
