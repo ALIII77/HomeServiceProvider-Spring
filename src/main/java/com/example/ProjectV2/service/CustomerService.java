@@ -4,6 +4,7 @@ package com.example.ProjectV2.service;
 import com.example.ProjectV2.entity.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface CustomerService {
@@ -22,28 +23,10 @@ public interface CustomerService {
 
     List<SubService> showAllSubServiceByService(Service service);
 
-/*
-    void addOrder(String customerUsername, String description, double purposedPrice, String address, String subServiceName);
-*/
+    boolean checkUsername(String username);
 
-/*
-    void addComment(String customerName,Long orderId,double score,String comment,String expertUsername);
-*/
+    void cartToCartPaymentWages(Long orderId,double amount);
 
-/*
-    void changeOrderStatusToStarted(Long orderId); //
-*/
-
-/*
-    void changeOrderStatusToStarted(Order order);//
-*/
-
-/*
-    void changeOrderStatusToDone(Long orderId ,Long offerId);
-*/
-
-/*
-    void changeOrderStatusToDone(Order order, Offer offer);
-*/
+    void onlinePayment(Long orderId,double amount);
 
 }
