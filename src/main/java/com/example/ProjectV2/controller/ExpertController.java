@@ -1,5 +1,7 @@
 package com.example.ProjectV2.controller;
 
+import com.example.ProjectV2.dto.Expert.AddOfferByExpertDto;
+import com.example.ProjectV2.dto.Expert.ExpertChangePasswordDto;
 import com.example.ProjectV2.entity.Admin;
 import com.example.ProjectV2.entity.Customer;
 import com.example.ProjectV2.entity.Expert;
@@ -25,13 +27,13 @@ public class ExpertController {
 
 
     @PutMapping("change-password-expert")
-    public void changePassword(@RequestBody AdminController.ChangePasswordExpertDTO changePasswordExpertDTO) {
+    public void changePassword(@RequestBody ExpertChangePasswordDto changePasswordExpertDTO) {
         expertService.changePassword(changePasswordExpertDTO.getExpert(), changePasswordExpertDTO.getNewPassword());
     }
 
 
     @PostMapping("add-offer")
-    public void addOffer(@RequestBody AddOfferDTO addOffer) {
+    public void addOffer(@RequestBody AddOfferByExpertDto addOffer) {
         Offer newOffer = new Offer();
         newOffer.setStartDate(addOffer.getStartJobDate());
         newOffer.setEndDate(addOffer.getEndJobDate());
@@ -39,18 +41,6 @@ public class ExpertController {
         offerService.addOffer(newOffer, addOffer.getOrderId());
     }
 
-
-    //ADD OFFER
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class AddOfferDTO {
-        private Long orderId;
-        private LocalDateTime startJobDate;
-        private LocalDateTime endJobDate;
-        private double price;
-    }
 
 
 }
