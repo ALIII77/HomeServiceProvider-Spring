@@ -2,6 +2,7 @@ package com.example.ProjectV2.entity;
 
 import com.example.ProjectV2.enums.ExpertStatus;
 import com.example.ProjectV2.enums.OrderStatus;
+import com.example.ProjectV2.enums.PersonType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -43,8 +44,9 @@ public class Expert extends Person {
     private Credit credit;
     @ColumnDefault("0")
     @Column(nullable = false)
-    private double score; //average score
-    //@Lob
+    private double score;
+
+
     @ToString.Exclude
     private byte[] image;
 
@@ -85,10 +87,13 @@ public class Expert extends Person {
         this.image = image;
     }
 
+
     @PrePersist
     private void prePersist() {
         expertStatus = ExpertStatus.NEW;
+        setPersonType(PersonType.EXPERT);
     }
+
 
     //Equals And HashCode
     @Override
