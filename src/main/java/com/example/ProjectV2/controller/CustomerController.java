@@ -1,7 +1,7 @@
 package com.example.ProjectV2.controller;
 
+import com.example.ProjectV2.dto.Customer.*;
 import com.example.ProjectV2.entity.*;
-import com.example.ProjectV2.entity.builder.OrderBuilder;
 import com.example.ProjectV2.service.*;
 import lombok.*;
 import org.springframework.web.bind.annotation.*;
@@ -25,26 +25,26 @@ public class CustomerController {
 
 
     @PutMapping("change-password-customer")
-    public void changePassword(@RequestBody ChangePasswordCustomerDTO changePasswordDTO) {
+    public void changePassword(@RequestBody CustomerChangePasswordDto changePasswordDTO) {
         customerService.changePassword(changePasswordDTO.getCustomer(), changePasswordDTO.getNewPassword());
     }
 
 
     @GetMapping("show-all-Services")
     public List<Service> showAllServices() {
-        return serviceService.findAll();
+        return serviceService.findAllServices();
     }
 
 
     @GetMapping("show-all-sub-service-with-service-name")
-    public List<SubServiceDTO> showAllSubServiceWithServiceName(@RequestParam String serviceName) {
+    public List<SubServiceDto> showAllSubServiceWithServiceName(@RequestParam String serviceName) {
         Service service = new Service();
         service.setName(serviceName);
         List<SubService> subServicesByServiceName = subServiceService.findAllSubServicesByService(service);
-        List<SubServiceDTO> resultSubServiceList = new ArrayList<>();
+        List<SubServiceDto> resultSubServiceList = new ArrayList<>();
         for (SubService s : subServicesByServiceName) {
-            SubServiceDTO subServiceDTO
-                    = new SubServiceDTO(s.getService().getName(), s.getName(), s.getDescription(), s.getBasePrice());
+            SubServiceDto subServiceDTO
+                    = new SubServiceDto(s.getService().getName(), s.getName(), s.getDescription(), s.getBasePrice());
             resultSubServiceList.add(subServiceDTO);
         }
         return resultSubServiceList;
@@ -52,7 +52,7 @@ public class CustomerController {
 
 
     @PostMapping("add-comment")
-    public void addComment(@RequestBody CommentDTO commentDTO) {
+    public void addComment(@RequestBody AddCommentByCustomerDto commentDTO) {
         Comment newComment = new Comment();
         newComment.setText(commentDTO.getText());
         newComment.setScore(commentDTO.getScore());
@@ -62,12 +62,12 @@ public class CustomerController {
 
 
     @GetMapping("offers-sorted-by-price")
-    public List<SortedOffersDTO> sortedOffersByPrices(@RequestParam Long orderId) {                             //check
+    public List<SortedOffersDto> sortedOffersByPrices(@RequestParam Long orderId) {                             //check
         List<Offer> offerList = offerService.findAllOfferOneOrderByExpertScore(orderId);
-        List<SortedOffersDTO> resultSortedOffer = new ArrayList<>();
+        List<SortedOffersDto> resultSortedOffer = new ArrayList<>();
         for (Offer o : offerList) {
-            SortedOffersDTO offersSortedByPrice
-                    = new SortedOffersDTO(o.getExpert().getUsername(), o.getStartDate()
+            SortedOffersDto offersSortedByPrice
+                    = new SortedOffersDto(o.getExpert().getUsername(), o.getStartDate()
                     , o.getEndDate(), o.getPrice(), o.getExpert().getScore(), o.getRegisterOfferDate());
             resultSortedOffer.add(offersSortedByPrice);
         }
@@ -76,12 +76,12 @@ public class CustomerController {
 
 
     @GetMapping("offers-sorted-by-expert-score")
-    public List<SortedOffersDTO> sortedOffersByExpertScore(@RequestParam Long orderId, Long expertId) {          //check
+    public List<SortedOffersDto> sortedOffersByExpertScore(@RequestParam Long orderId, Long expertId) {          //check
         List<Offer> offerList = offerService.findOfferByOrderIdAndExpertId(orderId, expertId).stream().toList();
-        List<SortedOffersDTO> resultSortedOffer = new ArrayList<>();
+        List<SortedOffersDto> resultSortedOffer = new ArrayList<>();
         for (Offer o : offerList) {
-            SortedOffersDTO offerSortedByExpertScore
-                    = new SortedOffersDTO(o.getExpert().getUsername(), o.getStartDate()
+            SortedOffersDto offerSortedByExpertScore
+                    = new SortedOffersDto(o.getExpert().getUsername(), o.getStartDate()
                     , o.getEndDate(), o.getPrice(), o.getPrice(), o.getRegisterOfferDate());
             resultSortedOffer.add(offerSortedByExpertScore);
         }
@@ -90,14 +90,14 @@ public class CustomerController {
 
 
     @PutMapping("add-order")
-    public void addOrder(@RequestBody OrderDTO orderDTO) {
+    public void addOrder(@RequestBody OrderDto orderDTO) {
         orderService.addOrder(orderDTO.getOrder(), orderDTO.getCustomerId(), orderDTO.getSubServiceName());
 
     }
 
 
     @PutMapping("select-expert")
-    public void selectExpert(@RequestBody SelectExpertDTO selectExpert) {
+    public void selectExpert(@RequestBody SelectExpertDto selectExpert) {
         expertService.selectExpert(selectExpert.getOfferId(), selectExpert.getOrderId());
     }
 
@@ -111,92 +111,13 @@ public class CustomerController {
 
 
     @PutMapping("change-order-status-to-done")
-    public void changeOrderStatusToDone(@RequestParam Long orderId, Long offerId) {                               //check
+    public void changeOrderStatusToDone(@RequestParam Long orderId) {                               //check
         Order order = new Order();
         order.setId(orderId);
-        Offer offer = new Offer();
-        offer.setId(offerId);
-        orderService.changeOrderStatusToDone(order, offer);
+        orderService.changeOrderStatusToDone(order);
     }
 
 
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class ChangePasswordCustomerDTO {
-        private Customer customer;
-        private String newPassword;
-    }
-
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class CommentDTO {
-        private String text;
-        private double score;
-        private Long orderId;
-    }
-
-
-    //SELECT EXPERT DTO CLASS
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class SelectExpertDTO {
-        private Long offerId;
-        private Long orderId;
-    }
-
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class SubServiceDTO {
-        private String serviceName;
-        private String subServiceName;
-        private String description;
-        private double basePerice;
-    }
-
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class SortedOffersDTO {
-        private String expertUsername;
-        private LocalDateTime startJobDate;
-        private LocalDateTime endJobDate;
-        private double price;
-        private double score;
-        private LocalDateTime registeredOfferDate;
-    }
-
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class OrderDTO {
-        private Order order;
-        private Long customerId;
-        private String subServiceName;
-    }
-
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class changeOrderStatusDTO {
-        private Order order;
-        private Long offerId;
-    }
 
 
 }
