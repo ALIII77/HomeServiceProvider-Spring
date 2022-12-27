@@ -30,12 +30,11 @@ public class Comment extends BaseEntity<Long> {
     private String text;
 
     @Column(nullable = false)
-    @Positive(message = "message")
-    @Max(value = 5, message = "message")
-    private double score;
+    @Positive(message = "score can be positive value")
+    @Max(value = 5, message = "max score value is 5")
+    private double score;          //change to integer
 
     @OneToOne(mappedBy = "comment")
-
     @ToString.Exclude
     private Order order;
 
