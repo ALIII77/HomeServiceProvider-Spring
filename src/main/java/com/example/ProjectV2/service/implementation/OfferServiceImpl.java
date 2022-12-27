@@ -35,21 +35,20 @@ public class OfferServiceImpl implements OfferService {
     @Transactional
     @Override
     public void save(@Valid Offer offer) {
-        try {
-            offerRepository.save(offer);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
-        }
-
+        offerRepository.save(offer);
     }
 
     @Transactional
     @Override
     public void addOffer(Offer offer, Long expertId) {
+
         ExpertService expertService = applicationContext.getBean(ExpertService.class);
         OrderService orderService = applicationContext.getBean(OrderService.class);
         Expert findExpert = expertService.findExpertById(expertId)
                 .orElseThrow(() -> new NotFoundException("Not exists expert to create a offer to an order"));
+        if (findExpert.getExpertStatus() != ExpertStatus.CONFIRMED) {
+            throw new CustomizedIllegalArgumentException("Expert must be in confirmed status by admin");
+        }
         Order findOrder = orderService.findOrderById(offer.getOrder().getId())
                 .orElseThrow(() -> new NotFoundException("Not exists order with "
                         + offer.getOrder().getId() + " id  to create a offer for that"));
@@ -59,10 +58,12 @@ public class OfferServiceImpl implements OfferService {
         offerRepository.save(offer);
     }
 
+
     @Override
     public Optional<Offer> findOfferById(Long id) {
         return offerRepository.findById(id);
     }
+
 
     @Transactional
     @Override
@@ -70,11 +71,13 @@ public class OfferServiceImpl implements OfferService {
         return offerRepository.findAllOfferOneOrderByPrice(id);
     }
 
+
     @Transactional
     @Override
     public List<Offer> findAllOfferOneOrderByExpertScore(Long id) {
         return offerRepository.findAllOfferOneOrderByExpertScore(id);
     }
+
 
     @Transactional
     @Override
@@ -82,11 +85,13 @@ public class OfferServiceImpl implements OfferService {
         return offerRepository.findOfferByOrderIdAndExpertId(orderId, expertId);
     }
 
+
     @Transactional
     @Override
     public boolean isExistsByOrderIdAndExpertId(Long orderId, Long expertId) {
         return findOfferByOrderIdAndExpertId(orderId, expertId).isPresent();
     }
+
 
 
     @Transactional
@@ -120,6 +125,4 @@ public class OfferServiceImpl implements OfferService {
             throw new CustomizedIllegalArgumentException("this expert is sended offert to this order!!!!!");
         }
     }
-
-
 }
