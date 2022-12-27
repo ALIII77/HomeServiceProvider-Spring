@@ -1,14 +1,14 @@
 package com.example.ProjectV2.controller;
 
+import com.example.ProjectV2.dto.Admin.AddExpertToSubServiceDto;
+import com.example.ProjectV2.dto.Admin.AdminChangePasswordDto;
+import com.example.ProjectV2.dto.Admin.EditSubServiceByAdminDto;
+import com.example.ProjectV2.dto.Admin.SaveExpertWithPictureByAdminDto;
 import com.example.ProjectV2.entity.*;
 import com.example.ProjectV2.entity.builder.SubServiceBuilder;
 import com.example.ProjectV2.service.*;
 import lombok.*;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -35,8 +35,8 @@ public class AdminController {
 
 
     @PostMapping("save-expert-picture")
-    public void saveExpertWithPicture(@RequestBody SaveExpertWithPictureDTO saveExpertWithPictureDTO) {
-        if (expertService.findExpertById(saveExpertWithPictureDTO.getExpertId()).isEmpty()) {                   //in okeye?
+    public void saveExpertWithPicture(@RequestBody SaveExpertWithPictureByAdminDto saveExpertWithPictureDTO) {
+        if (expertService.findExpertById(saveExpertWithPictureDTO.getExpertId()).isEmpty()) {
             System.out.println("Not found expert to add avatar picture!");
         }
         expertService.findExpertById(saveExpertWithPictureDTO.getExpert().getId());
@@ -51,8 +51,8 @@ public class AdminController {
 
 
     @PutMapping("change-password-admin")
-    public void changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
-        adminService.changeAdminPassword(changePasswordDTO.getAdmin(), changePasswordDTO.getNewPassword());
+    public void changePassword(@RequestBody AdminChangePasswordDto adminChangePasswordDto) {
+        adminService.changeAdminPassword(adminChangePasswordDto.getAdmin(), adminChangePasswordDto.getNewPassword());
     }
 
 
@@ -69,21 +69,21 @@ public class AdminController {
 
 
     @PutMapping("edit-sub-service")
-    public void editSubService(@RequestBody EditSubServiceDTO editSubServiceDTO) {
+    public void editSubService(@RequestBody EditSubServiceByAdminDto editSubServiceDTO) {
         subServiceService.editSubService
                 (editSubServiceDTO.getSubService().getName(), editSubServiceDTO.getDescription(), editSubServiceDTO.getBasePrice());
     }
 
 
     @PutMapping("edit-sub-service-with-description")
-    public void editSubServiceWithDescription(@RequestBody EditSubServiceDTO editSubServiceDTO) {
+    public void editSubServiceWithDescription(@RequestBody EditSubServiceByAdminDto editSubServiceDTO) {
         subServiceService.editSubServiceWithDescription
                 (editSubServiceDTO.getSubService(), editSubServiceDTO.getDescription());
     }
 
 
     @PutMapping("edit-sub-service-with-base-price")
-    public void editSubServiceWithBasePrice(@RequestBody EditSubServiceDTO editSubServiceDTO) {
+    public void editSubServiceWithBasePrice(@RequestBody EditSubServiceByAdminDto editSubServiceDTO) {
         subServiceService.editSubServiceWithBasePrice
                 (editSubServiceDTO.getSubService(), editSubServiceDTO.getBasePrice());
     }
@@ -96,13 +96,13 @@ public class AdminController {
 
 
     @PutMapping("add-expert-to-sub-service")
-    public void addExpertToSubService(@RequestBody ExpertSubServiceDTO addExpertToSubService) {
+    public void addExpertToSubService(@RequestBody AddExpertToSubServiceDto addExpertToSubService) {
         expertService.addExpertToSubService(addExpertToSubService.getExpert(), addExpertToSubService.getSubServiceName());
     }
 
 
     @DeleteMapping("delete-expert-from-sub-service")
-    public void deleteExpertFromSubService(@RequestBody ExpertSubServiceDTO expertSubService) {
+    public void deleteExpertFromSubService(@RequestBody AddExpertToSubServiceDto expertSubService) {
         expertService.deleteExpertFromSubService(expertSubService.getExpert(), expertSubService.getSubServiceName());
     }
 
@@ -121,83 +121,5 @@ public class AdminController {
         subService.setId(subServiceId);
         subServiceService.deleteSubService(subService);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*id example*/
-//    @PutMapping("{id}")
-//    public void editSubServiceWithBasePrice(@PathVariable Long id editSubServiceWithBasePriceDTO) {
-//        subServiceService.editSubServiceWithBasePrice
-//                (editSubServiceWithBasePriceDTO.subService, editSubServiceWithBasePriceDTO.basePrice);
-//    }
-
-
-    //ADMIN DTO Class
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class ChangePasswordDTO {
-        private Admin admin;
-        private String newPassword;
-    }
-
-
-    //SUB SERVICE DTO Class
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class EditSubServiceDTO {
-        private SubService subService;
-        private String description;
-        private double basePrice;
-    }
-
-
-    //EXPERT DTO Class
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class SaveExpertWithPictureDTO {
-        private Expert expert;
-        private File pictureFile;
-
-        private Long expertId;
-    }
-
-
-    //CHANGE PASSWORD EXPERT
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class ChangePasswordExpertDTO {
-        private Expert expert;
-        private String newPassword;
-    }
-
-
-    //ADD EXPERT TO SUB SERVICE DTO CLASS
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    static class ExpertSubServiceDTO {
-        private Expert expert;
-        private String subServiceName;
-    }
-
 
 }
