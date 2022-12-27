@@ -20,6 +20,7 @@ public class Service extends BaseEntity<Long> {
     @Column(unique = true)
     @NotBlank(message = "cant name attribute is null")
     private String name;
+
     @OneToMany(mappedBy = "service", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @ToString.Exclude
     private Set<SubService> subServices;
