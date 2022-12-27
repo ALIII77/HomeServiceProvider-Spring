@@ -32,52 +32,9 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public void saveComment(@Valid Comment comment) {
-        try {
-            commentRepository.save(comment);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
-        }
+        commentRepository.save(comment);
     }
 
-
-
-
-    /*@Transactional
-    @Override
-    public void addComment(String customerName, Long orderId, double score, String comment, String expertUsername) {
-
-        Customer findCustomer  = customerRepository.findCustomerByUsername(customerName)
-                .orElseThrow(() -> new NotFoundException("Not exists customer to add comment"));
-
-        Expert findExpert  = expertRepository.findExpertByUsername(expertUsername)
-                .orElseThrow(() -> new NotFoundException("Not exists expert to add comment"));
-
-        Order findOrder = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NotFoundException(" Not order expert to add comment "));
-
-        if (findOrder.getOrderStatus() != OrderStatus.PAID) {
-            throw new CustomizedIllegalArgumentException(" Order must be Done state ! ");
-        }
-
-        try {
-            Comment newComment = new Comment();
-            newComment.setCustomer(findCustomer);
-            newComment.setExpert(findExpert);
-            newComment.setScore(score);
-            newComment.setText(comment);
-            newComment.setOrder(orderOptional.get());
-            commentRepository.save(newComment);
-            findCustomer.addComment(newComment);
-            customerRepository.save(findCustomer);
-            findExpert.addComment(newComment);
-            Double averageScore = findExpert.getCommentSet().stream()
-                    .mapToDouble(commentScore -> commentScore.getScore()).average().orElse(0);
-            findExpert.setScore(averageScore);
-            expertRepository.save(findExpert);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
-        }
-    }*/
 
 
     @Transactional
@@ -91,13 +48,11 @@ public class CommentServiceImpl implements CommentService {
         if (findOrder.getOrderStatus() != OrderStatus.PAID) {
             throw new CustomizedIllegalArgumentException(" Order must be Paid state ! ");
         }
-
         findOrder.setComment(newComment);
         newComment.setOrder(findOrder);
         commentRepository.save(newComment);
-        expertService.setScore(findExpert.getId());
-
-
+        expertService.setSumScore(findExpert.getId());
+        expertService.setScoreAfterJobEnd(findOrder.getAcceptedOffer().getId());
     }
 
 
