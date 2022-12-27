@@ -4,6 +4,6 @@ public enum ExpertStatus {
     NEW,
     AWAITING_CONFIRM,
     CONFIRMED,
-    DIACTIVE
+    DE_ACTIVE
 
 }
