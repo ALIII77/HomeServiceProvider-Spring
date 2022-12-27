@@ -1,9 +1,7 @@
 package com.example.ProjectV2.service.implementation;
 
-import com.example.ProjectV2.entity.Customer;
-import com.example.ProjectV2.entity.Offer;
-import com.example.ProjectV2.entity.Order;
-import com.example.ProjectV2.entity.SubService;
+import com.example.ProjectV2.entity.*;
+import com.example.ProjectV2.enums.ExpertStatus;
 import com.example.ProjectV2.enums.OrderStatus;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
@@ -12,6 +10,7 @@ import com.example.ProjectV2.repository.OrderRepository;
 import com.example.ProjectV2.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -21,6 +20,8 @@ import java.util.Optional;
 
 @org.springframework.stereotype.Service
 public class OrderServiceImpl implements OrderService {
+    @Autowired
+    ApplicationContext applicationContext;
     private final OrderRepository orderRepository;
     private final CustomerService customerService;
     private final SubServiceService subServiceService;
@@ -30,7 +31,6 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, CustomerService customerService
             , SubServiceService subServiceService, OfferService offerService) {
-
         this.orderRepository = orderRepository;
         this.customerService = customerService;
         this.subServiceService = subServiceService;
@@ -40,11 +40,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void save(@Valid Order order) {
-        try {
-            orderRepository.save(order);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
-        }
+        orderRepository.save(order);
     }
 
     @Transactional
@@ -95,15 +91,6 @@ public class OrderServiceImpl implements OrderService {
         order.setSubService(findSubService);
         order.setCustomer(findCustomer);
         orderRepository.save(order);
-
-
-/*            findSubService.addOrder(order);
-            subServiceRepository.save(findSubService);
-
-            Customer findCustomer = customerOptional.get();
-            findCustomer.addOrder(order);
-            customerRepository.save(findCustomer);
-            */
     }
 
 
@@ -113,30 +100,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    /*    @Override
-    @Transactional
-    public void changeOrderStatusToStarted(Long orderId) {
-        Order findOrder = orderService.findOrderById(orderId)
-                .orElseThrow(() -> new NotFoundException("Not found order with id = " + orderId));
-        Offer findOffer = offerService.findOfferByOrderIdAndExpertId(orderId,findOrder.getExpert().getId())
-                .orElseThrow(() -> new NotFoundException("Not found Offer with id =     "));
-        if (LocalDateTime.now().isAfter(findOffer.getOfferDate())){
-            try {
-                findOrder.setOrderStatus(OrderStatus.STARTED);
-                orderService.save(findOrder);
-            } catch (CustomizedIllegalArgumentException exception) {
-                System.out.println(exception.getMessage());
-            }
-        } else {
-            throw new PermissionDeniedException("The registered time for the order has not yet arrived");
-        }
-    }*/
-
-
     @Transactional
     @Override
     public void changeOrderStatusToStarted(Order order) {
-
         Order findOrder = orderRepository.findById(order.getId())
                 .orElseThrow(() -> new NotFoundException("Not found order with id = " + order.getId()));
         if (findOrder.getOrderStatus() != OrderStatus.COMING_EXPERTS) {
@@ -145,57 +111,31 @@ public class OrderServiceImpl implements OrderService {
         }
         if (LocalDateTime.now().isAfter(findOrder.getAcceptedOffer().getStartDate())
                 && LocalDateTime.now().isBefore(findOrder.getAcceptedOffer().getEndDate())) {
-            try {
-                findOrder.setOrderStatus(OrderStatus.STARTED);
-                orderRepository.save(findOrder);
-            } catch (CustomizedIllegalArgumentException exception) {
-                System.out.println(exception.getMessage());
-            }
+            findOrder.setOrderStatus(OrderStatus.STARTED);
+            orderRepository.save(findOrder);
         } else {
             throw new CustomizedIllegalArgumentException("The registered time for the order has not yet arrived");
         }
     }
 
 
-/*    @Override
-    @Transactional
-    public void changeOrderStatusToDone(Long orderId, Long offerId) {
-        Order findOrder = orderService.findOrderById(orderId)
-                .orElseThrow(() -> new NotFoundException("Not found order with id = " + orderId));
-        Offer findOffer = offerService.findOfferById(offerId)
-                .orElseThrow(() -> new NotFoundException("Not found offer with id = " + offerId));
-        if (LocalDateTime.now().isAfter(findOrder.getExecutionDate().plusHours((long) Math.ceil(findOffer.getDuration())))) {
-            try {
-                findOrder.setOrderStatus(OrderStatus.DONE);
-                orderService.save(findOrder);
-            } catch (CustomizedIllegalArgumentException exception) {
-                System.out.println(exception.getMessage());
-            }
-        } else {
-            throw new PermissionDeniedException("The registered end time of offer has not yet arrived");
-        }
-    }*/
-
-
     @Override
-    public void changeOrderStatusToDone(Order order, Offer offer) {
+    public void changeOrderStatusToDone(Order order) {
         Order findOrder = orderRepository.findById(order.getId())
                 .orElseThrow(() -> new NotFoundException("Not found order with id = " + order.getId()));
         if (findOrder.getOrderStatus() != OrderStatus.STARTED) {
             throw new CustomizedIllegalArgumentException
-                    ("the execution of the order must first be 'STARTED' state , then it  will be change status order to 'DONE' state");
+                    ("the execution of the order must first be 'STARTED' state " +
+                            ", then it  will be change status order to 'DONE' state");
         }
-        Offer findOffer = offerService.findOfferById(offer.getId())
-                .orElseThrow(() -> new NotFoundException("Not found offer with id = " + offer.getId()));
-        long hours = ChronoUnit.HOURS.between(findOffer.getEndDate(), LocalDateTime.now());
+        findOrder.setOrderStatus(OrderStatus.DONE);
+        orderRepository.save(findOrder);
+    }
 
-        // TODO: 12/21/2022 agar in hours az endtime bishtar bood az emtiaz expert kam beshe!
-
-        try {
-            findOrder.setOrderStatus(OrderStatus.DONE);
-            orderRepository.save(findOrder);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
-        }
+    @Override
+    public void changeOrderStatusToPaid(Order order) {
+        Order findOrder = orderRepository.findById(order.getId()).get();
+        findOrder.setOrderStatus(OrderStatus.PAID);
+        orderRepository.save(findOrder);
     }
 }
