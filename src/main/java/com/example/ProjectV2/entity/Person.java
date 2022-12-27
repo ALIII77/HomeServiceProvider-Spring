@@ -1,7 +1,10 @@
 package com.example.ProjectV2.entity;
 
 import com.example.ProjectV2.base.BaseEntity;
+import com.example.ProjectV2.enums.PersonType;
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -44,6 +47,11 @@ public class Person extends BaseEntity<Long> {
     @NotNull
     @Pattern(regexp = "^[A-Za-z0-9._$%^&*#!@\\-/\\\\]{8,8}+$", message = "No match password with pattern")
     private String password;
+
+
+    @Enumerated(EnumType.STRING)
+    private PersonType personType;
+
 
     @CreationTimestamp
     private LocalDateTime dateOfRegistration;
