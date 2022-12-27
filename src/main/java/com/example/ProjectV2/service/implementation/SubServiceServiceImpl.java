@@ -5,6 +5,7 @@ import com.example.ProjectV2.entity.Service;
 import com.example.ProjectV2.entity.SubService;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
+import com.example.ProjectV2.exception.NotUniqueException;
 import com.example.ProjectV2.exception.PermissionDeniedException;
 import com.example.ProjectV2.repository.SubServiceRepository;
 import com.example.ProjectV2.service.*;
@@ -78,9 +79,10 @@ public class SubServiceServiceImpl implements SubServiceService {
         }
     }
 
+
     @Transactional
     @Override
-    public void editSubService(String subServiceName, String description, double basePrice) {        //test fail
+    public void editSubService(String subServiceName, String description, double basePrice) {
         Optional<SubService> subServiceOptional = subServiceRepository.findSubServiceByName(subServiceName);
         if (subServiceOptional.isEmpty()) {
             throw new NotFoundException("Not found sub service");
@@ -104,6 +106,7 @@ public class SubServiceServiceImpl implements SubServiceService {
         subServiceRepository.save(findSubService);
     }
 
+
     @Transactional
     @Override
     public void editSubServiceWithBasePrice(SubService subService, double basePrice) {
@@ -119,7 +122,7 @@ public class SubServiceServiceImpl implements SubServiceService {
 
     @Override
     public Optional<SubService> findSubServiceByName(String subServiceName) {
-        return  subServiceRepository.findSubServiceByName(subServiceName);
+        return subServiceRepository.findSubServiceByName(subServiceName);
 
     }
 
@@ -133,37 +136,27 @@ public class SubServiceServiceImpl implements SubServiceService {
     @Transactional
     @Override
     public void deleteSubService(SubService subService) {
-        try {
-            subServiceRepository.deleteSubServiceById(subService.getId());
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+        subServiceRepository.deleteSubServiceById(subService.getId());
     }
 
 
     @Transactional
     @Override
     public void addExpert(Long subServiceId, Expert expert) {
-        SubService findSubService = subServiceRepository.findSubServiceById(subServiceId);
-        try {
-            findSubService.addExpert(expert);
-        } catch (Exception exception) {
-            System.out.println(exception.getMessage());
+        if (subServiceRepository.findSubServiceById(subServiceId) == null) {
+            throw new NotFoundException("Not found sub service");
         }
+        SubService findSubService = subServiceRepository.findSubServiceById(subServiceId);
+        findSubService.addExpert(expert);
     }
 
 
     @Transactional
     @Override
     public void update(@Valid SubService subService) {
-        if (subServiceRepository.findById(subService.getId()).isPresent()) {
-            try {
-                subServiceRepository.save(subService);
-            } catch (CustomizedIllegalArgumentException exception) {
-                System.out.println(exception.getMessage());
-            }
+        if (subServiceRepository.findById(subService.getId()).isEmpty()) {
+            throw new NotFoundException("not found sub service");
         }
+        subServiceRepository.save(subService);
     }
-
-
 }
