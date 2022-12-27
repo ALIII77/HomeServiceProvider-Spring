@@ -23,7 +23,9 @@ public interface OrderService {
     /*
         void changeOrderStatusToDone(Long orderId ,Long offerId);
     */
-    void changeOrderStatusToDone(Order order, Offer offer);
+    void changeOrderStatusToDone(Order order);
+
+    void changeOrderStatusToPaid(Order order);
 
 
 }
