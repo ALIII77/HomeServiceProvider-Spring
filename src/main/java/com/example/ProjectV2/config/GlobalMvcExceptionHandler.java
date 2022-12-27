@@ -1,8 +1,6 @@
 package com.example.ProjectV2.config;
 
 import com.example.ProjectV2.exception.*;
-import com.sun.jdi.request.ExceptionRequest;
-import jakarta.persistence.NoResultException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,8 +41,8 @@ public class GlobalMvcExceptionHandler {
     }
 
 
-    @ExceptionHandler(value = NotEnoughAmount.class)
-    public ResponseEntity<Object> handleNotFoundException(NotEnoughAmount ex, WebRequest request) {
+    @ExceptionHandler(value = NotEnoughAmountException.class)
+    public ResponseEntity<Object> handleNotFoundException(NotEnoughAmountException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
