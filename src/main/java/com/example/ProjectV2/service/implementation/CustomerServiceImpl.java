@@ -3,49 +3,58 @@ package com.example.ProjectV2.service.implementation;
 import com.example.ProjectV2.entity.*;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
+import com.example.ProjectV2.exception.NotUniqueException;
 import com.example.ProjectV2.exception.PermissionDeniedException;
 import com.example.ProjectV2.repository.CustomerRepository;
 import com.example.ProjectV2.service.*;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @org.springframework.stereotype.Service
 public class CustomerServiceImpl implements CustomerService {
-
+    @Autowired
+    ApplicationContext applicationContext;
     private final CustomerRepository customerRepository;
     private final ServiceService serviceService;
     private final SubServiceService subServiceService;
+    private final TransactionService transactionService;
+    private final CreditService creditService;
 
     @Autowired
     public CustomerServiceImpl(CustomerRepository customerRepository
-            , ServiceService serviceService, SubServiceService subServiceService) {
+            , ServiceService serviceService, SubServiceService subServiceService, TransactionService transactionService, CreditService creditService) {
         this.customerRepository = customerRepository;
         this.serviceService = serviceService;
         this.subServiceService = subServiceService;
+        this.transactionService = transactionService;
+        this.creditService = creditService;
     }
+
 
     @Transactional
     @Override
     public Customer save(@Valid Customer customer) {
-        try {
+        if (checkUsername(customer.getUsername())) {
             return customerRepository.save(customer);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
         }
-        return null;
+        throw new NotUniqueException("customer username is exists");
     }
 
 
     @Transactional
     @Override
-    public void changePassword(Customer customer, String newPassword) {     //test ok
+    public void changePassword(Customer customer, String newPassword) {
         Optional<Customer> customerOptional = customerRepository.findCustomerByUsername(customer.getUsername());
         if (customerOptional.isEmpty()) {
             throw new NotFoundException("Not found customer to change password");
@@ -94,7 +103,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<Service> showAllServices() {
-        return serviceService.findAll();
+        return serviceService.findAllServices();
     }
 
     @Override
@@ -103,5 +112,19 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
-}
+    @Override
+    public boolean checkUsername(String username) {
+        return customerRepository.findCustomerByUsername(username).isEmpty();
+    }
 
+    @Transactional
+    @Override
+    public void cartToCartPaymentWages(Long orderId, double amount) {
+        creditService.credit(orderId, amount);
+    }
+
+    public void onlinePayment(Long orderId, double amount) {
+        creditService.online(orderId, amount);
+    }
+
+}
