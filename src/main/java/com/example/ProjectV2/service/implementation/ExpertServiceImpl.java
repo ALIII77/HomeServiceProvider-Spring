@@ -3,19 +3,21 @@ package com.example.ProjectV2.service.implementation;
 import com.example.ProjectV2.entity.*;
 import com.example.ProjectV2.enums.ExpertStatus;
 import com.example.ProjectV2.enums.OrderStatus;
-import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
-import com.example.ProjectV2.exception.NotFoundException;
-import com.example.ProjectV2.exception.PermissionDeniedException;
+import com.example.ProjectV2.exception.*;
 import com.example.ProjectV2.repository.ExpertRepository;
 import com.example.ProjectV2.repository.SubServiceRepository;
 import com.example.ProjectV2.service.*;
 import com.example.ProjectV2.utils.QueryUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -42,12 +44,10 @@ public class ExpertServiceImpl implements ExpertService {
     @Transactional
     @Override
     public Expert save(@Valid Expert expert) {
-        try {
+        if (checkUsername(expert.getUsername())) {
             return expertRepository.save(expert);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
         }
-        return null;
+        throw new NotUniqueException("expert username is exists");
     }
 
 
@@ -61,25 +61,23 @@ public class ExpertServiceImpl implements ExpertService {
                 expert.setImage(fis.readAllBytes());
                 fis.close();
                 expertRepository.save(expert);
-            } catch (Exception exception) {
-                System.out.println(exception.getMessage());
-                exception.printStackTrace();
+            } catch (IOException exception) {
+                throw new ImageException("input image error");
             }
         } else {
-            System.out.println("image format not jpg or image size not less than 300KB");
+            throw new ImageException("size or format image error");
         }
     }
 
 
     @Transactional
     @Override
-    public void changePassword(String username, String oldPassword, String newPassword) {      //test ok
+    public void changePassword(String username, String oldPassword, String newPassword) {
         Optional<Expert> expertOptional = findExpertByUsername(username);
         if (expertOptional.isEmpty()) {
             throw new NotFoundException("Not found expert to change password");
         }
         if (Objects.equals(expertOptional.get().getPassword(), oldPassword)) {
-            System.out.println("Expert Find!");
             Expert expert = expertOptional.get();
             if (expert.getExpertStatus() == ExpertStatus.CONFIRMED) {
                 if (!(oldPassword.equals(newPassword))) {
@@ -105,7 +103,6 @@ public class ExpertServiceImpl implements ExpertService {
         if (!expert.getPassword().equals(expertOptional.get().getPassword())) {
             throw new PermissionDeniedException("password incorrect");
         }
-        System.out.println("expert Find!");
         Expert findExpert = expertOptional.get();
         if ((findExpert.getPassword().equals(newPassword))) {
             throw new PermissionDeniedException("Enter new password that not equal with old password");
@@ -127,7 +124,6 @@ public class ExpertServiceImpl implements ExpertService {
         Optional<Expert> expertOptional = expertRepository.findExpertByUsername(username);
         if (expertOptional.isPresent()) {
             if (Objects.equals(expertOptional.get().getPassword(), password)) {
-                System.out.println(" WellCome ");
                 return true;
             }
             throw new PermissionDeniedException(" incorrect password ");
@@ -156,13 +152,13 @@ public class ExpertServiceImpl implements ExpertService {
         }
         Expert findExpert = findExpertOptional.get();
         SubService findSubService = findSubServiceOptional.get();
-        if (findExpert.getExpertStatus() == ExpertStatus.CONFIRMED) {
-            findSubService.addExpert(findExpert);                         //as samte subservice add kardam dorost shod
-            subServiceRepository.save(findSubService);
-        } else {
+        if (findExpert.getExpertStatus() != ExpertStatus.CONFIRMED ) {
             throw new CustomizedIllegalArgumentException("Expert must be in confirmed status by admin");
         }
+        findSubService.addExpert(findExpert);
+        subServiceRepository.save(findSubService);
     }
+
 
     @Transactional
     @Override
@@ -174,9 +170,10 @@ public class ExpertServiceImpl implements ExpertService {
         SubService findSubServices = subServiceRepository.findSubServiceByName(subServiceName)
                 .orElseThrow(() -> new NotFoundException("Not found subService with this sub service name"));
 
-        findSubServices.getExpertSet().remove(findExpert);               //as samti ke mappedby nadare bayad hazf kard
+        findSubServices.getExpertSet().remove(findExpert);
         expertRepository.save(findExpert);
     }
+
 
     @Transactional
     @Override
@@ -210,11 +207,35 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Transactional
     @Override
-    public void setScore(Long expertId) {
+    public void setSumScore(Long expertId) {
         Expert findExpert = expertRepository.findById(expertId).orElseThrow(() -> new NotFoundException("not exist expert"));
-        Double averageScore = findExpert.getCommentSet().stream()
-                .mapToDouble(commentScore -> commentScore.getScore()).average().orElse(0);
+        double averageScore = findExpert.getCommentSet().stream()
+                .mapToDouble(commentScore -> commentScore.getScore()).sum();
         findExpert.setScore(averageScore);
+        expertRepository.save(findExpert);
+    }
+
+    @Override
+    public boolean checkUsername(String username) {
+        return expertRepository.findExpertByUsername(username).isEmpty();
+    }
+
+    @Override
+    public void showScore(Expert expert) {
+        expertRepository.findExpertByUsername(expert.getUsername()).orElseThrow(() -> new NotFoundException(" Not found expert ! "));
+        System.out.println("expert with username = " + expert.getUsername() + ", score is " + expert.getScore());
+    }
+
+    @Override
+    public void setScoreAfterJobEnd(Long offerId) {
+        Offer findOffer = offerService.findOfferById(offerId).get();
+        long hours = ChronoUnit.HOURS.between(findOffer.getEndDate(), LocalDateTime.now());
+        Expert findExpert = findOffer.getExpert();
+        double score=findExpert.getScore()-hours;
+        findExpert.setScore(score);
+        if (score<0){
+            findExpert.setExpertStatus(ExpertStatus.DE_ACTIVE);
+        }
         expertRepository.save(findExpert);
     }
 }
