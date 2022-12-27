@@ -3,6 +3,7 @@ package com.example.ProjectV2.service.implementation;
 import com.example.ProjectV2.entity.*;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
+import com.example.ProjectV2.exception.NotUniqueException;
 import com.example.ProjectV2.repository.*;
 import com.example.ProjectV2.service.*;
 import jakarta.validation.Valid;
@@ -37,8 +38,12 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     @Override
     public Admin save(@Valid Admin admin) {
-         return adminRepository.save(admin);
+        if (checkUsername(admin.getUsername())) {
+            return adminRepository.save(admin);
+        }
+        throw new NotUniqueException("Username admin must be unique");
     }
+
 
     @Transactional
     @Override
@@ -57,34 +62,22 @@ public class AdminServiceImpl implements AdminService {
         adminRepository.save(findAdmin);
     }
 
+
     @Override
     public Optional<Admin> findAdminByUsername(String username) {
-        try {
-            return adminRepository.findAdminByUsername(username);
-        } catch (NotFoundException exception) {
-            System.out.println(exception.getMessage());
-        }
-        return Optional.empty();
+        return adminRepository.findAdminByUsername(username);
     }
 
     @Transactional
     @Override
     public void deleteAdminByUsername(String username) {
-        try {
-            adminRepository.deleteAdminByUsername(username);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
-        }
+        adminRepository.deleteAdminByUsername(username);
     }
 
     @Transactional
     @Override
     public void createNewService(@Valid Service service) {
-        try {
-            serviceService.save(service);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
-        }
+        serviceService.save(service);
     }
 
     @Transactional
@@ -93,15 +86,18 @@ public class AdminServiceImpl implements AdminService {
         return subServiceService.save(serviceName, subService);
     }
 
+
     @Override
     public List<Service> showAllServices() {
-        return serviceService.findAll();
+        return serviceService.findAllServices();
     }
+
 
     @Override
     public List<SubService> findAllSubServiceByService(Service service) {
         return subServiceService.findAllSubServicesByService(service);
     }
+
 
     @Transactional
     @Override
@@ -116,41 +112,32 @@ public class AdminServiceImpl implements AdminService {
         subServiceService.editSubServiceWithDescription(subService, description);
     }
 
+
     @Transactional
     @Override
     public void editSubServiceWithBasePrice(SubService subService, double basePrice) {
         subServiceService.editSubServiceWithBasePrice(subService, basePrice);
     }
 
+
     @Transactional
     @Override
     public void addCustomer(@Valid Customer customer) {
-        try {
-            customerService.save(customer);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
-        }
+        customerService.save(customer);
     }
 
 
     @Transactional
     @Override
     public void addExpert(@Valid Expert expert) {
-        try {
-            expertService.save(expert);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
-        }
+        expertService.save(expert);
     }
+
 
     @Transactional
     @Override
     public void addExpertWithPicture(Expert expert, File file) {
-        try {
-            expertService.saveExpertWithPicture(expert, file);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
-        }
+        expertService.saveExpertWithPicture(expert, file);
     }
 
 
@@ -166,16 +153,23 @@ public class AdminServiceImpl implements AdminService {
         expertService.deleteExpertFromSubService(expert, subServiceName);
     }
 
+
     @Transactional
     @Override
     public void expertConfirm(Expert expert) {
         expertService.expertConfirm(expert);
     }
 
+
     @Transactional
     @Override
     public void deleteSubService(SubService subService) {
         subServiceService.deleteSubService(subService);
+    }
+
+
+    boolean checkUsername(String username) {
+        return adminRepository.findAdminByUsername(username).isEmpty();
     }
 
 
