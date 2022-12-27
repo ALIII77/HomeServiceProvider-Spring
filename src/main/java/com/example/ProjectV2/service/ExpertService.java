@@ -31,8 +31,11 @@ public interface ExpertService {
     void expertConfirm(Expert expert);
 
     void selectExpert(Long offerId, Long customerId);
+    void setSumScore(Long expertId);
 
+    boolean checkUsername(String username);
 
+    void showScore(Expert expert);
 
-    void setScore(Long expertId);
+    void setScoreAfterJobEnd(Long offerId);
 }
