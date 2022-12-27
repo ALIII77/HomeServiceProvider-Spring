@@ -64,6 +64,11 @@ public class Order extends BaseEntity<Long> {
     private Comment comment;
 
 
+    @OneToOne
+    @ToString.Exclude
+    private Transaction transaction;
+
+
     public Order(String jobDescription, LocalDateTime executionDate, String address, double proposedPrice, OrderStatus orderStatus) {
         this.jobDescription = jobDescription;
         this.executionDate = executionDate;
