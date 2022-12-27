@@ -7,11 +7,13 @@ import java.util.Optional;
 
 public interface ServiceService {
 
-    List<Service> findAll();
+    List<Service> findAllServices();
 
     Optional<Service> findServiceByName(String serviceName);
 
     Service save(Service service);
+
+    boolean isNotExistsService(String serviceName);
 
 
 }

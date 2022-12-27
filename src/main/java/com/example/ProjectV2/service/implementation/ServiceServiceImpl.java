@@ -3,6 +3,7 @@ package com.example.ProjectV2.service.implementation;
 import com.example.ProjectV2.entity.Service;
 import com.example.ProjectV2.entity.SubService;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
+import com.example.ProjectV2.exception.NotUniqueException;
 import com.example.ProjectV2.repository.ServiceRepository;
 import com.example.ProjectV2.service.*;
 import jakarta.validation.Valid;
@@ -18,7 +19,6 @@ public class ServiceServiceImpl implements ServiceService {
 
     private final ServiceRepository serviceRepository;
 
-
     @Autowired
     public ServiceServiceImpl(ServiceRepository serviceRepository) {
         this.serviceRepository = serviceRepository;
@@ -26,7 +26,7 @@ public class ServiceServiceImpl implements ServiceService {
 
 
     @Override
-    public List<Service> findAll() {
+    public List<Service> findAllServices() {
         return serviceRepository.findAll();
     }
 
@@ -34,17 +34,21 @@ public class ServiceServiceImpl implements ServiceService {
     @Transactional
     @Override
     public Service save(@Valid Service service) {
-        try {
-            if (service.getSubServices() != null) {
-                for (SubService s : service.getSubServices()) {
-                    s.setService(service);
-                }
-            }
-            return serviceRepository.save(service);
-        } catch (CustomizedIllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
+        if (!isNotExistsService(service.getName())) {
+            throw new NotUniqueException("service is exists");
         }
-        return null;
+        if (service.getSubServices() != null) {
+            for (SubService s : service.getSubServices()) {
+                s.setService(service);
+            }
+        }
+        return serviceRepository.save(service);
+    }
+
+
+    @Override
+    public boolean isNotExistsService(String serviceName) {
+        return serviceRepository.findServiceByName(serviceName).isEmpty();
     }
 
 
