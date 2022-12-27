@@ -164,7 +164,7 @@ class CustomerServiceImplTest {
     @Test
     void changeOrderStatusToDone() {
 
-        orderService.changeOrderStatusToDone(orderService.findOrderById(2L).get(), offerService.findOfferById(1L).get());
+        orderService.changeOrderStatusToDone(orderService.findOrderById(2L).get());
         Assertions.assertEquals(OrderStatus.DONE, orderService.findOrderById(2L).get().getOrderStatus());
 
     }
