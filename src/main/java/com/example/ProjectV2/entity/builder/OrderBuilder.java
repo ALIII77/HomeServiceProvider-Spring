@@ -2,7 +2,7 @@ package com.example.ProjectV2.entity.builder;
 
 
 import com.example.ProjectV2.entity.*;
-import com.example.ProjectV2.enums.OrderStatus;
+import com.example.ProjectV2.entity.enums.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -18,6 +18,7 @@ public class OrderBuilder {
     private Set<Offer> offerSet;
     private SubService subService;
     private Comment comment;
+
 
     public OrderBuilder() {
     }

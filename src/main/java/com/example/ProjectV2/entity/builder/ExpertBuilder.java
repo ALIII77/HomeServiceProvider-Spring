@@ -2,7 +2,7 @@ package com.example.ProjectV2.entity.builder;
 
 
 import com.example.ProjectV2.entity.*;
-import com.example.ProjectV2.enums.ExpertStatus;
+import com.example.ProjectV2.entity.enums.ExpertStatus;
 
 import java.time.LocalDateTime;
 import java.util.Set;
