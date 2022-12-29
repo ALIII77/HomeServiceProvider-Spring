@@ -42,19 +42,6 @@ class ExpertServiceImplTest {
 
     @BeforeEach
     public void runBeforeEach() {
-
-        //EXPERT
-        expert1 = expertService.findExpertByUsername("o.nobahari").get();
-        expert4 = new ExpertBuilder().firstName("Mohamad").lastName("Kermani").email("m.kermani@gmail.com")
-                .username("m.kermani").password("mk123456").image(null).build();
-
-        //OFFER
-        offer1 = new OfferBuilder()
-                .offerDate(LocalDateTime.of(2022, 12, 26, 17, 30, 40, 40))
-                .order(orderService.findOrderById(2L).get())
-                .price(25200000)
-                .build();
-
     }
 
 
@@ -69,8 +56,8 @@ class ExpertServiceImplTest {
     @Test
     void changePassword() {
 
-//        expertService.changePassword(expertService.findExpertByUsername(expert4.getUsername()).get(),"mk123459");
-//        Assertions.assertEquals("mk123459",expertService.findExpertByUsername(expert4.getUsername()).get().getPassword());
+        expertService.changePassword(expertService.findExpertByUsername(expert4.getUsername()).get(), "mk123459");
+        Assertions.assertEquals("mk123459", expertService.findExpertByUsername(expert4.getUsername()).get().getPassword());
 
     }
 
