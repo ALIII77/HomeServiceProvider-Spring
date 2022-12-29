@@ -32,7 +32,7 @@ public class Comment extends BaseEntity<Long> {
     @Column(nullable = false)
     @Positive(message = "score can be positive value")
     @Max(value = 5, message = "max score value is 5")
-    private double score;          //change to integer
+    private double score;
 
     @OneToOne(mappedBy = "comment")
     @ToString.Exclude
@@ -52,7 +52,6 @@ public class Comment extends BaseEntity<Long> {
     }
 
 
-    //Equals And HashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

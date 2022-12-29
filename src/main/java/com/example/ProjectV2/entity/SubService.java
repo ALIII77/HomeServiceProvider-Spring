@@ -73,7 +73,7 @@ public class SubService extends BaseEntity<Long> {
         this.orderSet = orderSet;
     }
 
-    //Equals And HashCode
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

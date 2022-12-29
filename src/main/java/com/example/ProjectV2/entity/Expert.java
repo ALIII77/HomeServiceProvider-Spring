@@ -93,7 +93,6 @@ public class Expert extends Person {
     }
 
 
-    //Equals And HashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

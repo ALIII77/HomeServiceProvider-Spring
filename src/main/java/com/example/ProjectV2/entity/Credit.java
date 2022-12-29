@@ -25,7 +25,7 @@ public class Credit extends BaseEntity<Long> {
         this.amount = amount;
     }
 
-    //Equals And HashCode
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

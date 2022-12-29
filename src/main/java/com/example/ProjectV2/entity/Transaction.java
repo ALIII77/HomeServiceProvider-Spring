@@ -51,7 +51,7 @@ public class Transaction extends BaseEntity<Long> {
         this.transactionType = transactionType;
     }
 
-    //Equals And HashCode
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

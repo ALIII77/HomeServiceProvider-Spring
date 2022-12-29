@@ -66,7 +66,7 @@ public class Offer extends BaseEntity<Long> {
     }
 
 
-    //Equals And HashCode
+
 
 
     @Override

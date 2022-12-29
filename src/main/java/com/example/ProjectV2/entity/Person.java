@@ -74,7 +74,6 @@ public class Person extends BaseEntity<Long> {
     }
 
 
-    //Equals And HashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -125,7 +125,6 @@ public class Order extends BaseEntity<Long> {
         orderStatus = OrderStatus.WAITING_FOR_SEND_OFFER_EXPERTS;
     }
 
-    //Equals And HashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
