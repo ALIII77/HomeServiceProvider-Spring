@@ -47,13 +47,16 @@ public class GlobalMvcExceptionHandler {
     }
 
 
-    @ExceptionHandler(value = NotUniqueException.class)
-    public ResponseEntity<Object> handleNotFoundException(NotUniqueException ex, WebRequest request) {
+    @ExceptionHandler(value = TransactionException.class)
+    public ResponseEntity<Object> handleNotFoundException(TransactionException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
 
-
+    @ExceptionHandler(value = NotUniqueException.class)
+    public ResponseEntity<Object> handleNotFoundException(NotUniqueException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 
 
 }
