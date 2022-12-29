@@ -11,10 +11,7 @@ public interface OfferService {
 
     void save(Offer offer);
 
-    /*
-        void addOffer(String expertUsername, double purposedPrice, double duration, Long orderId);
-    */
-    void addOffer(Offer offer, Long expertId);
+    void addOffer(Offer offer, Long expertId,Long orderId);
 
     Optional<Offer> findOfferById(Long id);
 

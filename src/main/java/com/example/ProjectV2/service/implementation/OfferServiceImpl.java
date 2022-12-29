@@ -3,7 +3,7 @@ package com.example.ProjectV2.service.implementation;
 import com.example.ProjectV2.entity.Expert;
 import com.example.ProjectV2.entity.Offer;
 import com.example.ProjectV2.entity.Order;
-import com.example.ProjectV2.enums.ExpertStatus;
+import com.example.ProjectV2.entity.enums.ExpertStatus;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
 import com.example.ProjectV2.exception.PermissionDeniedException;
@@ -12,8 +12,6 @@ import com.example.ProjectV2.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -22,13 +20,14 @@ import java.util.Optional;
 
 @org.springframework.stereotype.Service
 public class OfferServiceImpl implements OfferService {
-    @Autowired
-    ApplicationContext applicationContext;
+
+    private final ApplicationContext applicationContext;
     private final OfferRepository offerRepository;
 
 
     @Autowired
-    public OfferServiceImpl(OfferRepository offerRepository) {
+    public OfferServiceImpl(ApplicationContext applicationContext, OfferRepository offerRepository) {
+        this.applicationContext = applicationContext;
         this.offerRepository = offerRepository;
     }
 
@@ -40,7 +39,7 @@ public class OfferServiceImpl implements OfferService {
 
     @Transactional
     @Override
-    public void addOffer(Offer offer, Long expertId) {
+    public void addOffer(Offer offer, Long expertId,Long orderId) {
 
         ExpertService expertService = applicationContext.getBean(ExpertService.class);
         OrderService orderService = applicationContext.getBean(OrderService.class);
@@ -49,7 +48,7 @@ public class OfferServiceImpl implements OfferService {
         if (findExpert.getExpertStatus() != ExpertStatus.CONFIRMED) {
             throw new CustomizedIllegalArgumentException("Expert must be in confirmed status by admin");
         }
-        Order findOrder = orderService.findOrderById(offer.getOrder().getId())
+        Order findOrder = orderService.findOrderById(orderId)
                 .orElseThrow(() -> new NotFoundException("Not exists order with "
                         + offer.getOrder().getId() + " id  to create a offer for that"));
         checkConstraint(findOrder, findExpert, offer);
