@@ -1,8 +1,7 @@
 package com.example.ProjectV2.service.implementation;
 
 import com.example.ProjectV2.entity.*;
-import com.example.ProjectV2.enums.ExpertStatus;
-import com.example.ProjectV2.enums.OrderStatus;
+import com.example.ProjectV2.entity.enums.OrderStatus;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
 import com.example.ProjectV2.exception.PermissionDeniedException;
@@ -14,14 +13,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 
 
 @org.springframework.stereotype.Service
 public class OrderServiceImpl implements OrderService {
-    @Autowired
-    ApplicationContext applicationContext;
+    private  final ApplicationContext applicationContext;
     private final OrderRepository orderRepository;
     private final CustomerService customerService;
     private final SubServiceService subServiceService;
@@ -29,8 +27,10 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, CustomerService customerService
+    public OrderServiceImpl(ApplicationContext applicationContext
+            , OrderRepository orderRepository, CustomerService customerService
             , SubServiceService subServiceService, OfferService offerService) {
+        this.applicationContext = applicationContext;
         this.orderRepository = orderRepository;
         this.customerService = customerService;
         this.subServiceService = subServiceService;
@@ -45,7 +45,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public void addOrder(String customerUsername, String description, double purposedPrice, String address, String subServiceName) {
+    public void addOrder(String customerUsername, String description, double purposedPrice
+            , String address, String subServiceName) {
         Optional<Customer> customerOptional = customerService.findCustomerByUsername(customerUsername);
         Optional<SubService> subServiceOptional = subServiceService.findSubServiceByName(subServiceName);
         if (customerOptional.isEmpty()) {
@@ -67,7 +68,6 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setAddress(address);
         newOrder.setCustomer(findCustomer);
         newOrder.setSubService(findSubService);
-        /*newOrder.setOrderStatus(OrderStatus.WAITING_FOR_SUGGESTION_OF_EXPERTS);*/
         newOrder.setExecutionDate(LocalDateTime.now());
         orderRepository.save(newOrder);
 
@@ -129,6 +129,7 @@ public class OrderServiceImpl implements OrderService {
                             ", then it  will be change status order to 'DONE' state");
         }
         findOrder.setOrderStatus(OrderStatus.DONE);
+        applicationContext.getBean(ExpertService.class).setScoreAfterJobEnd(findOrder.getAcceptedOffer().getId());
         orderRepository.save(findOrder);
     }
 
@@ -138,4 +139,18 @@ public class OrderServiceImpl implements OrderService {
         findOrder.setOrderStatus(OrderStatus.PAID);
         orderRepository.save(findOrder);
     }
+
+
+
+    @Override
+    public List<Order> showAllOrderByExpertSubService(Long expertId) {
+        return orderRepository.showAllOrderByExpertSubService(expertId);
+    }
+
+    @Override
+    public List<Order> showAllOrdersWaitingOffer(OrderStatus orderStatus) {
+        return orderRepository.findAllByOrderStatus(orderStatus);
+    }
+
+
 }
