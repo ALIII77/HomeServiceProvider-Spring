@@ -1,8 +1,8 @@
 package com.example.ProjectV2.service.implementation;
 
 import com.example.ProjectV2.entity.*;
-import com.example.ProjectV2.enums.ExpertStatus;
-import com.example.ProjectV2.enums.OrderStatus;
+import com.example.ProjectV2.entity.enums.ExpertStatus;
+import com.example.ProjectV2.entity.enums.OrderStatus;
 import com.example.ProjectV2.exception.*;
 import com.example.ProjectV2.repository.ExpertRepository;
 import com.example.ProjectV2.repository.SubServiceRepository;
@@ -10,14 +10,17 @@ import com.example.ProjectV2.service.*;
 import com.example.ProjectV2.utils.QueryUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -32,7 +35,9 @@ public class ExpertServiceImpl implements ExpertService {
 
 
     @Autowired
-    public ExpertServiceImpl(ExpertRepository expertRepository, SubServiceRepository subServiceRepository, OfferService offerService, CustomerService customerService, OrderService orderService) {
+    public ExpertServiceImpl(ExpertRepository expertRepository
+            , SubServiceRepository subServiceRepository, OfferService offerService
+            , CustomerService customerService, OrderService orderService) {
         this.expertRepository = expertRepository;
         this.subServiceRepository = subServiceRepository;
         this.offerService = offerService;
@@ -48,25 +53,6 @@ public class ExpertServiceImpl implements ExpertService {
             return expertRepository.save(expert);
         }
         throw new NotUniqueException("expert username is exists");
-    }
-
-
-    @Transactional
-    @Override
-    public void saveExpertWithPicture(Expert expert, File file) {
-        if (file.getName().endsWith(".jpg") && (file.length() / 1024 <= 300)) {
-            try {
-                QueryUtil.checkEntity(expert);
-                FileInputStream fis = new FileInputStream(file);
-                expert.setImage(fis.readAllBytes());
-                fis.close();
-                expertRepository.save(expert);
-            } catch (IOException exception) {
-                throw new ImageException("input image error");
-            }
-        } else {
-            throw new ImageException("size or format image error");
-        }
     }
 
 
@@ -152,7 +138,7 @@ public class ExpertServiceImpl implements ExpertService {
         }
         Expert findExpert = findExpertOptional.get();
         SubService findSubService = findSubServiceOptional.get();
-        if (findExpert.getExpertStatus() != ExpertStatus.CONFIRMED ) {
+        if (findExpert.getExpertStatus() != ExpertStatus.CONFIRMED) {
             throw new CustomizedIllegalArgumentException("Expert must be in confirmed status by admin");
         }
         findSubService.addExpert(findExpert);
@@ -207,35 +193,117 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Transactional
     @Override
-    public void setSumScore(Long expertId) {
+    public void setSumScore(Long expertId, double score) {
         Expert findExpert = expertRepository.findById(expertId).orElseThrow(() -> new NotFoundException("not exist expert"));
-        double averageScore = findExpert.getCommentSet().stream()
-                .mapToDouble(commentScore -> commentScore.getScore()).sum();
-        findExpert.setScore(averageScore);
+        findExpert.setScore(findExpert.getScore() + score);
         expertRepository.save(findExpert);
     }
 
+
+    @Transactional
     @Override
     public boolean checkUsername(String username) {
         return expertRepository.findExpertByUsername(username).isEmpty();
     }
 
+
+    @Transactional
     @Override
     public void showScore(Expert expert) {
-        expertRepository.findExpertByUsername(expert.getUsername()).orElseThrow(() -> new NotFoundException(" Not found expert ! "));
+        expertRepository.findExpertByUsername(expert.getUsername())
+                .orElseThrow(() -> new NotFoundException(" Not found expert ! "));
         System.out.println("expert with username = " + expert.getUsername() + ", score is " + expert.getScore());
     }
 
+
+    @Transactional
     @Override
     public void setScoreAfterJobEnd(Long offerId) {
         Offer findOffer = offerService.findOfferById(offerId).get();
         long hours = ChronoUnit.HOURS.between(findOffer.getEndDate(), LocalDateTime.now());
         Expert findExpert = findOffer.getExpert();
-        double score=findExpert.getScore()-hours;
+        double score = findExpert.getScore() - hours;
         findExpert.setScore(score);
-        if (score<0){
+        if (score < 0) {
             findExpert.setExpertStatus(ExpertStatus.DE_ACTIVE);
         }
         expertRepository.save(findExpert);
     }
+
+
+    @Transactional
+    @Override
+    public void saveExpertWithPicture(Expert expert, File file) {
+        if (file.getName().endsWith(".jpg") && (file.length() / 1024 <= 300)) {
+            try {
+                QueryUtil.checkEntity(expert);
+                FileInputStream fis = new FileInputStream(file);
+                expert.setImage(fis.readAllBytes());
+                fis.close();
+                expertRepository.save(expert);
+            } catch (IOException exception) {
+                throw new ImageException("input image error");
+            }
+        } else {
+            throw new ImageException("size or format image error");
+        }
+    }
+
+
+    @Transactional
+    @Override
+    public void setExpertImage(String expertUsername, MultipartFile file) {
+        byte[] bFile = null;
+        if (file.getSize() / 1024 <= 300 && file.getOriginalFilename().endsWith(".jpg")) {
+            try {
+                bFile = file.getBytes();
+            } catch (IOException e) {
+                throw new ImageException("not found image");
+            }
+        } else {
+            throw new ImageException("not match format or size ");
+        }
+        Expert findExpert = expertRepository.findExpertByUsername(expertUsername)
+                .orElseThrow(() -> new NotFoundException("Not found expert with " + expertUsername + " username"));
+        findExpert.setImage(bFile);
+        expertRepository.save(findExpert);
+    }
+
+
+    @Override
+    public List<Expert> showAllExperts() {
+        return expertRepository.findAll();
+    }
+
+    @Transactional
+    @Override
+    public void deleteExpert(String username) {
+        expertRepository.deleteExpertByUsername(username);
+    }
+
+    @Override
+    public List<Order> showAllOrderByExpertSubService(Long expertId) {
+        return orderService.showAllOrderByExpertSubService(expertId);
+    }
+
+    @Override
+    public List<Order> showAllOrdersWaitingOffer(OrderStatus orderStatus) {
+        return orderService.showAllOrdersWaitingOffer(orderStatus);
+    }
+
+
+    @Override
+    public List<Expert> searchExpert(Map<String, String> predicateMap) {
+        return expertRepository.findAll(returnSpecification(predicateMap));
+    }
+
+    Specification<Expert> returnSpecification(Map<String, String> predicateMap) {
+        Specification<Expert> specification = Specification.where(null);
+        for (Map.Entry<String, String> entry : predicateMap.entrySet()) {
+            specification=specification.and((expert, cq, cb) -> cb.equal(expert.get(entry.getKey()), entry.getValue()));
+        }
+        return specification;
+    }
+
+
 }
