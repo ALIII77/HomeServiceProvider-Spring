@@ -20,9 +20,6 @@ public class ProjectV2Application {
 
         SpringApplication.run(ProjectV2Application.class,args);
 
-//        ConfigurableApplicationContext run = SpringApplication.run(ProjectV2Application.class, args);
-//        run.getBean(EntityManager.class);
-//        ExpertService expertService = run.getBean(ExpertService.class);
     }
 
 }
