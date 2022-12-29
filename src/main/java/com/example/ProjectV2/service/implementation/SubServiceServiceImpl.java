@@ -159,4 +159,8 @@ public class SubServiceServiceImpl implements SubServiceService {
         }
         subServiceRepository.save(subService);
     }
+
+    public Service findServiceByName(String serviceName){
+        return serviceService.findServiceByName(serviceName).get();
+    }
 }

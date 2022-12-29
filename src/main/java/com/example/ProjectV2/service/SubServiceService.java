@@ -33,9 +33,5 @@ public interface SubServiceService {
 
     void update(SubService subService);
 
-/*
-    void editSubService(Long id , SubService subService);
-*/
-
 
 }
