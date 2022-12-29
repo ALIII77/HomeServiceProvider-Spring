@@ -1,7 +1,9 @@
 package com.example.ProjectV2.dto.Expert;
 
 
+import com.example.ProjectV2.entity.Admin;
 import com.example.ProjectV2.entity.Expert;
+import com.example.ProjectV2.entity.builder.ExpertBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ExpertChangePasswordDto {
-    private Expert expert;
+    private String username;
+    private String oldPassword;
     private String newPassword;
+
+    public Expert getExpert(){
+        return new ExpertBuilder().username(username).password(oldPassword).build();
+    }
+
 }
