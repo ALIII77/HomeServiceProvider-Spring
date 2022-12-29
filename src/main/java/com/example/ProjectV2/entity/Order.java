@@ -1,15 +1,12 @@
 package com.example.ProjectV2.entity;
 
 import com.example.ProjectV2.base.BaseEntity;
-import com.example.ProjectV2.enums.OrderStatus;
+import com.example.ProjectV2.entity.enums.OrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.*;
 
-import java.rmi.Remote;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -125,7 +122,7 @@ public class Order extends BaseEntity<Long> {
 
     @PrePersist
     private void prePersist() {
-        orderStatus = OrderStatus.WAITING_FOR_SUGGESTION_OF_EXPERTS;
+        orderStatus = OrderStatus.WAITING_FOR_SEND_OFFER_EXPERTS;
     }
 
     //Equals And HashCode

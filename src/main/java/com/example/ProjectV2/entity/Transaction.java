@@ -1,7 +1,7 @@
 package com.example.ProjectV2.entity;
 
 import com.example.ProjectV2.base.BaseEntity;
-import com.example.ProjectV2.enums.TransactionType;
+import com.example.ProjectV2.entity.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

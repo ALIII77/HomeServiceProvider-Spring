@@ -1,7 +1,7 @@
 package com.example.ProjectV2.entity;
 
 import com.example.ProjectV2.base.BaseEntity;
-import com.example.ProjectV2.enums.PersonType;
+import com.example.ProjectV2.entity.enums.PersonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
