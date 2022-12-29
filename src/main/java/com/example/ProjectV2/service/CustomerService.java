@@ -29,4 +29,14 @@ public interface CustomerService {
 
     void onlinePayment(Long orderId,double amount);
 
+    List<Customer> showAllCustomer();
+
+    void deleteCustomer(String username);
+
+    List<Customer> searchCustomer(Map<String, String> predicateMap);
+
+    void credit(Long orderId , double amount);
+
+    void online (Long orderId , double amount);
+
 }
