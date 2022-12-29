@@ -10,11 +10,11 @@ import lombok.*;
 @Setter
 @Builder
 public class ExpertDto {
+
     private String firstName;
     private String lastName;
     private String username;
     private String email;
-    private ExpertStatus expertStatus;
     private double score;
 
 }
