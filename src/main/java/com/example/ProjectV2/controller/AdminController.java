@@ -1,6 +1,7 @@
 package com.example.ProjectV2.controller;
 
 import com.example.ProjectV2.dto.Admin.*;
+
 import com.example.ProjectV2.entity.*;
 import com.example.ProjectV2.service.*;
 import org.springframework.web.bind.annotation.*;
@@ -29,38 +30,38 @@ public class AdminController {
     }
 
 
-    @PostMapping("save-admin")                                                          //ok
+    @PostMapping("save-admin")
     public void save(@RequestBody Admin admin) {
         adminService.save(admin);
     }
 
 
-    @PutMapping("change-password-admin")                                                  //ok
+    @PutMapping("change-password-admin")
     public void changePassword(@RequestBody AdminChangePasswordDto adminChangePasswordDto) {
         adminService.changeAdminPassword(adminChangePasswordDto.getAdmin(), adminChangePasswordDto.getNewPassword());
     }
 
 
-    @PostMapping("save-service")                                                         //ok
+    @PostMapping("save-service")
     public void createNewService(@RequestBody ServiceSaveDto serviceSaveDto) {
         serviceService.save(serviceSaveDto.getService());
     }
 
 
-    @PostMapping("save-sub-service")                                                       //ok
+    @PostMapping("save-sub-service")
     public void createNewSubService(@RequestBody SubServiceSaveDto subServiceSaveDto) {
         subServiceService.save(subServiceSaveDto.getServiceName(), subServiceSaveDto.getSubService());
     }
 
 
-    @PutMapping("edit-sub-service")                                                         //ok
+    @PutMapping("edit-sub-service")
     public void editSubService(@RequestBody EditSubServiceByAdminDto editSubServiceDTO) {
         subServiceService.editSubService
                 (editSubServiceDTO.getSubServiceName(), editSubServiceDTO.getDescription(), editSubServiceDTO.getBasePrice());
     }
 
 
-    @PutMapping("edit-sub-service-with-description")                                            //ok
+    @PutMapping("edit-sub-service-with-description")
     public void editSubServiceWithDescription(@RequestBody EditDescriptionSubServiceByAdminDto
                                                       editDescriptionSubServiceByAdminDto) {
         subServiceService.editSubServiceWithDescription
@@ -68,27 +69,27 @@ public class AdminController {
     }
 
 
-    @PutMapping("edit-sub-service-with-base-price")                                           //ok
+    @PutMapping("edit-sub-service-with-base-price")
     public void editSubServiceWithBasePrice(@RequestBody EditBasePriceSubServiceByAdminDto editBasePriceSubServiceByAdminDto) {
         subServiceService.editSubServiceWithBasePrice
                 (editBasePriceSubServiceByAdminDto.getSubService(), editBasePriceSubServiceByAdminDto.getBasePrice());
     }
 
 
-    @PutMapping("add-expert-to-sub-service")                                                              //ok
+    @PutMapping("add-expert-to-sub-service")
     public void addExpertToSubService(@RequestBody AddExpertToSubServiceDto addExpertToSubService) {
         expertService.addExpertToSubService(addExpertToSubService.getExpert(), addExpertToSubService.getSubServiceName());
     }
 
 
-    @DeleteMapping("delete-sub-service/{subServiceName}")                                   //ok
+    @DeleteMapping("delete-sub-service/{subServiceName}")
     public void deleteSubServiceWithSubServiceName(@PathVariable String subServiceName) {
         SubService findSuService = subServiceService.findSubServiceByName(subServiceName).get();
         subServiceService.deleteSubService(findSuService);
     }
 
 
-    @PutMapping("expert-confirm")                                                               //ok
+    @PutMapping("expert-confirm")
     public void expertConfirm(@RequestBody ExpertConfirmByAdminDto expertConfirmByAdminDto) {
         Expert findExpert = new Expert();
         findExpert.setUsername(expertConfirmByAdminDto.getExpertUsername());
@@ -96,7 +97,7 @@ public class AdminController {
     }
 
 
-    @DeleteMapping("delete-expert-form-sub-service")                                          //ok
+    @DeleteMapping("delete-expert-form-sub-service")
     public void deleteExpertFormSubService(@RequestBody DeleteExpertFormSubServiceDto deleteExpertFormSubServiceDto) {
         Expert expert = expertService.findExpertById(deleteExpertFormSubServiceDto.getExpertId()).get();
         expertService.deleteExpertFromSubService(expert
@@ -132,36 +133,14 @@ public class AdminController {
     @GetMapping("show-all-experts")
     public List<ExpertDto> showAllExperts() {
         List<Expert> expertList = expertService.showAllExperts();
-        List<ExpertDto> expertDtoList = new ArrayList<>();
-        for (Expert e : expertList) {
-            ExpertDto expertDto = ExpertDto.builder().
-                    firstName(e.getFirstName())
-                    .lastName(e.getLastName())
-                    .username(e.getUsername())
-                    .email(e.getEmail())
-                    .score(e.getScore())
-                    .expertStatus(e.getExpertStatus())
-                    .build();
-            expertDtoList.add(expertDto);
-        }
-        return expertDtoList;
+        return expertDtoList(expertList);
     }
 
 
     @GetMapping("show-all-customer")
     public List<CustomerDto> showAllCustomer() {
         List<Customer> customerList = customerService.showAllCustomer();
-        List<CustomerDto> customerDtoList = new ArrayList<>();
-        for (Customer e : customerList) {
-            CustomerDto customerDto = CustomerDto.builder().
-                    firstName(e.getFirstName())
-                    .lastName(e.getLastName())
-                    .username(e.getUsername())
-                    .email(e.getEmail())
-                    .build();
-            customerDtoList.add(customerDto);
-        }
-        return customerDtoList;
+        return customerDtoList(customerList);
     }
 
 
@@ -172,38 +151,47 @@ public class AdminController {
 
 
     @GetMapping("find-customer-by-filter")
-    public List<CustomerDto> searchCustomer(Map<String, String> predicateMap) {
+    public List<CustomerDto> searchCustomer(@RequestParam Map<String, String> predicateMap) {
         List<Customer> customerList = customerService.searchCustomer(predicateMap);
-        List<CustomerDto> customerDtoList = new ArrayList<>();
-        for (Customer c : customerList) {
-            CustomerDto customerDto = CustomerDto.builder().
-                    firstName(c.getFirstName())
-                    .lastName(c.getLastName())
-                    .username(c.getUsername())
-                    .email(c.getEmail())
-                    .build();
-            customerDtoList.add(customerDto);
-        }
-        return customerDtoList;
+        return customerDtoList(customerList);
     }
 
 
-
     @GetMapping("find-expert-by-filter")
-    public List<ExpertDto> searchExpert(Map<String, String> predicateMap) {
+    public List<ExpertDto> searchExpert(@RequestParam Map<String, String> predicateMap) {
         List<Expert> expertList = expertService.searchExpert(predicateMap);
-        List<ExpertDto>  expertDtoList = new ArrayList<>();
-        for (Expert e : expertList) {
-            ExpertDto expertDto = ExpertDto.builder().
-                    firstName(e.getFirstName())
-                    .lastName(e.getLastName())
-                    .username(e.getUsername())
-                    .email(e.getEmail())
-                    .score(e.getScore())
+        return expertDtoList(expertList);
+    }
+
+
+    private List<ExpertDto> expertDtoList(List<Expert> expertList) {
+        List<ExpertDto> expertDtoList = new ArrayList<>();
+        for (Expert o : expertList) {
+            ExpertDto expertDto = ExpertDto.builder()
+                    .firstName(o.getFirstName())
+                    .lastName(o.getLastName())
+                    .email(o.getEmail())
+                    .score(o.getScore())
                     .build();
             expertDtoList.add(expertDto);
         }
         return expertDtoList;
+
+    }
+
+    private List<CustomerDto> customerDtoList(List<Customer> customerList) {
+        List<CustomerDto> customerDtoList = new ArrayList<>();
+        for (Customer o : customerList) {
+            CustomerDto customerDto = CustomerDto.builder()
+                    .firstName(o.getFirstName())
+                    .lastName(o.getLastName())
+                    .email(o.getEmail())
+                    .username(o.getUsername())
+                    .build();
+            customerDtoList.add(customerDto);
+        }
+        return customerDtoList;
+
     }
 
 
