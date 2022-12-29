@@ -12,5 +12,6 @@ import lombok.Setter;
 public class AddCommentByCustomerDto {
     private String text;
     private double score;
+    private String expertUsername;
     private Long orderId;
 }

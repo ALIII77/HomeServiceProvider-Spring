@@ -1,17 +1,31 @@
 package com.example.ProjectV2.dto.Customer;
 
 import com.example.ProjectV2.entity.Order;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.example.ProjectV2.entity.builder.OrderBuilder;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class OrderDto {
-    private Order order;
+    private String description;
+    private String address;
+    private double proposedPrice;
+    private LocalDateTime executionDate;
     private Long customerId;
     private String subServiceName;
+
+    public Order getOrder(){
+        Order order = new OrderBuilder()
+                .jobDescription(description)
+                .address(address)
+                .proposedPrice(proposedPrice)
+                .executionDate(executionDate)
+                .build();
+        return order;
+    }
 }
