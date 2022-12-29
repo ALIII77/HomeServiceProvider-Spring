@@ -1,6 +1,6 @@
 package com.example.ProjectV2.entity;
 
-import com.example.ProjectV2.enums.PersonType;
+import com.example.ProjectV2.entity.enums.PersonType;
 import jakarta.persistence.*;
 import lombok.*;
 

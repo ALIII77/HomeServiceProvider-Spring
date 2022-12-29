@@ -1,14 +1,12 @@
 package com.example.ProjectV2.entity;
 
-import com.example.ProjectV2.enums.ExpertStatus;
-import com.example.ProjectV2.enums.OrderStatus;
-import com.example.ProjectV2.enums.PersonType;
+import com.example.ProjectV2.entity.enums.ExpertStatus;
+import com.example.ProjectV2.entity.enums.PersonType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
