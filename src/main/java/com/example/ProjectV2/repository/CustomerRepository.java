@@ -17,13 +17,9 @@ import java.util.function.Predicate;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> , JpaSpecificationExecutor<Customer> {
 
-
     Optional<Customer> findCustomerByUsername(String username);
 
-
-
-    List<Customer> findBooksByAuthorNameAndTitle(Map<String,String> map);
-
+    void deleteCustomerByUsername(String username);
 
 
 
