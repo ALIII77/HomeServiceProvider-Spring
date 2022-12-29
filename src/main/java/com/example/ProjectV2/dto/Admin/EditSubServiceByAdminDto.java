@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EditSubServiceByAdminDto {
-    private SubService subService;
+    private String subServiceName;
     private String description;
     private double basePrice;
 }
