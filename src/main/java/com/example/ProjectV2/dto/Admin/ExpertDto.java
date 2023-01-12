@@ -1,6 +1,8 @@
 package com.example.ProjectV2.dto.Admin;
 
 
+import com.example.ProjectV2.entity.Expert;
+import com.example.ProjectV2.entity.Order;
 import com.example.ProjectV2.entity.enums.ExpertStatus;
 import lombok.*;
 
@@ -18,3 +20,5 @@ public class ExpertDto {
     private double score;
 
 }
+
+
