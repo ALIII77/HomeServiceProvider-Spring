@@ -4,6 +4,8 @@ import com.example.ProjectV2.dto.Admin.*;
 
 import com.example.ProjectV2.entity.*;
 import com.example.ProjectV2.service.*;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -12,27 +14,20 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class AdminController {
 
-    public final AdminService adminService;
-    public final ServiceService serviceService;
-    public final SubServiceService subServiceService;
-    public final ExpertService expertService;
-    public final CustomerService customerService;
-
-    public AdminController(AdminService adminService, ServiceService serviceService, SubServiceService subServiceService
-            , ExpertService expertService, CustomerService customerService) {
-        this.adminService = adminService;
-        this.serviceService = serviceService;
-        this.subServiceService = subServiceService;
-        this.expertService = expertService;
-        this.customerService = customerService;
-    }
+    private final AdminService adminService;
+    private final ServiceService serviceService;
+    private final SubServiceService subServiceService;
+    private final ExpertService expertService;
+    private final CustomerService customerService;
+    private final ModelMapper modelMapper;
 
 
-    @PostMapping("save-admin")
-    public void save(@RequestBody Admin admin) {
-        adminService.save(admin);
+    @PostMapping("/save-admin")
+    public void save(@RequestBody AdminDto adminDto) {
+        adminService.save(adminDto.getAdmin());
     }
 
 
@@ -113,6 +108,7 @@ public class AdminController {
         expertDto.setLastName(expert.getLastName());
         expertDto.setUsername(expert.getUsername());
         expertDto.setEmail(expert.getEmail());
+        expertDto.setScore(expert.getScore());
 
         return expertDto;
     }
@@ -167,32 +163,70 @@ public class AdminController {
     private List<ExpertDto> expertDtoList(List<Expert> expertList) {
         List<ExpertDto> expertDtoList = new ArrayList<>();
         for (Expert o : expertList) {
-            ExpertDto expertDto = ExpertDto.builder()
-                    .firstName(o.getFirstName())
-                    .lastName(o.getLastName())
-                    .email(o.getEmail())
-                    .score(o.getScore())
-                    .build();
-            expertDtoList.add(expertDto);
+            expertDtoList.add(modelMapper.map(o,ExpertDto.class));
         }
         return expertDtoList;
 
     }
 
+
+
+
+
+    @GetMapping("total-history-of-service")
+    public List<HistoryServiceDto> totalHistoryOfService(@RequestBody OrderStatusExpertIdDto orderStatusExpertIdDto) {
+        return adminService.totalHistoryOfService(orderStatusExpertIdDto.getOrderStatus(), orderStatusExpertIdDto.getExpertId());
+    }
+
+
+
+
+    @GetMapping("history-service")
+    public List<HistoryServiceDto> findAllOrderByOrderStatusAndExpertId(@RequestParam Map<String, String> predicateMap) {
+        return adminService.historyService(predicateMap);
+    }
+
+
+
+
     private List<CustomerDto> customerDtoList(List<Customer> customerList) {
         List<CustomerDto> customerDtoList = new ArrayList<>();
         for (Customer o : customerList) {
-            CustomerDto customerDto = CustomerDto.builder()
-                    .firstName(o.getFirstName())
-                    .lastName(o.getLastName())
-                    .email(o.getEmail())
-                    .username(o.getUsername())
-                    .build();
-            customerDtoList.add(customerDto);
+            customerDtoList.add(modelMapper.map(o,CustomerDto.class));
         }
         return customerDtoList;
 
     }
+
+
+
+
+    @GetMapping("customer-report")
+    public List<CustomerDto> customerReport(@RequestParam Map<String, String> mapPredicate) {
+        List<Customer> customerList = customerService.customerReport(mapPredicate);
+        List<CustomerDto> customerDtoList = customerDtoList(customerList);
+        return customerDtoList;
+    }
+
+
+
+
+
+
+    @GetMapping("expert-report")
+    public List<ExpertDto> expertReport(@RequestParam Map<String, String> mapPredicate) {
+        List<Expert> expertList = expertService.expertReport(mapPredicate);
+        List<ExpertDto> expertDtoList = expertDtoList(expertList);
+        return expertDtoList;
+    }
+
+
+
+
+
+
+
+
 
 
 }
