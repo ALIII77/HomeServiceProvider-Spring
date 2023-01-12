@@ -2,7 +2,9 @@ package com.example.ProjectV2.service;
 
 
 import com.example.ProjectV2.entity.*;
+import com.example.ProjectV2.entity.enums.OrderStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,5 +40,23 @@ public interface CustomerService {
     void credit(Long orderId , double amount);
 
     void online (Long orderId , double amount);
+
+    boolean verify(String code);
+
+    List<Customer>findAllCustomerByDateOfRegistration(LocalDateTime localDateTime);
+
+    List<Customer> customerReport (Map<String, String> predicateMap);
+
+    List<Order>customerOrderProfile(Map<String,String>predicateMap);
+
+    Credit findCreditByCustomerId (Long customerId);
+
+
+
+
+
+
+
+
 
 }
