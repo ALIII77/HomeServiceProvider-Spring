@@ -2,30 +2,35 @@ package com.example.ProjectV2.controller;
 
 import com.example.ProjectV2.dto.Customer.*;
 import com.example.ProjectV2.entity.*;
+import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.service.*;
+import com.example.ProjectV2.utils.Captcha;
+import com.example.ProjectV2.utils.SendEmail;
+import jakarta.annotation.security.PermitAll;
+import jakarta.mail.MessagingException;
 import lombok.*;
+import org.modelmapper.ModelMapper;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/customer")
 @RequiredArgsConstructor
 public class CustomerController {
-    public final CustomerService customerService;
-    public final CommentService commentService;
-    public final ServiceService serviceService;
-    public final SubServiceService subServiceService;
-    public final OfferService offerService;
-    public final OrderService orderService;
-    public final ExpertService expertService;
-
-
-    @PostMapping("save-customer")
-    public void save(@RequestBody Customer customer) {
-        customerService.save(customer);
-    }
+    private final CustomerService customerService;
+    private final CommentService commentService;
+    private final ServiceService serviceService;
+    private final SubServiceService subServiceService;
+    private final OfferService offerService;
+    private final OrderService orderService;
+    private final ExpertService expertService;
+    private final SendEmail sendEmail;
+    private final ModelMapper modelMapper;
 
 
     @PutMapping("change-password-customer")
@@ -40,6 +45,7 @@ public class CustomerController {
         for (Service s : serviceService.findAllServices()) {
             ServiceDto serviceDto = new ServiceDto();
             serviceDto.setName(s.getName());
+            serviceDto.setId(s.getId());
             serviceList.add(serviceDto);
         }
         return serviceList;
@@ -93,14 +99,13 @@ public class CustomerController {
         commentService.addComment(newComment, commentDTO.getExpertUsername(), commentDTO.getOrderId());
     }
 
-
-    @GetMapping("offers-sorted-by-price")
-    public List<SortedOffersDto> sortedOffersByPrices(@RequestParam Long orderId) {
+    @GetMapping("offers-sorted-by-price/{orderId}")
+    public List<OffersDto> sortedOffersByPrices(@PathVariable Long orderId) {
         List<Offer> offerList = offerService.findAllOfferOneOrderByPrice(orderId);
-        List<SortedOffersDto> resultSortedOffer = new ArrayList<>();
+        List<OffersDto> resultSortedOffer = new ArrayList<>();
         for (Offer o : offerList) {
-            SortedOffersDto offersSortedByPrice
-                    = new SortedOffersDto(o.getExpert().getUsername(), o.getStartDate()
+            OffersDto offersSortedByPrice
+                    = new OffersDto(o.getExpert().getUsername(), o.getStartDate()
                     , o.getEndDate(), o.getPrice(), o.getExpert().getScore(), o.getRegisterOfferDate());
             resultSortedOffer.add(offersSortedByPrice);
         }
@@ -108,14 +113,14 @@ public class CustomerController {
     }
 
 
-    @GetMapping("offers-sorted-by-expert-score")
-    public List<SortedOffersDto> sortedOffersByExpertScore(@RequestParam Long orderId) {
+    @GetMapping("offers-sorted-by-expert-score/{orderId}")
+    public List<OffersDto> sortedOffersByExpertScore(@PathVariable Long orderId) {
         List<Offer> offerList = offerService.findAllOfferOneOrderByExpertScore(orderId);
-        List<SortedOffersDto> resultSortedOffer = new ArrayList<>();
+        List<OffersDto> resultSortedOffer = new ArrayList<>();
         for (Offer o : offerList) {
-            SortedOffersDto offerSortedByExpertScore
-                    = new SortedOffersDto(o.getExpert().getUsername(), o.getStartDate()
-                    , o.getEndDate(), o.getPrice(), o.getPrice(), o.getRegisterOfferDate());
+            OffersDto offerSortedByExpertScore
+                    = new OffersDto(o.getExpert().getUsername(), o.getStartDate()
+                    , o.getEndDate(), o.getPrice(), o.getExpert().getScore(), o.getRegisterOfferDate());
             resultSortedOffer.add(offerSortedByExpertScore);
         }
         return resultSortedOffer;
@@ -137,18 +142,58 @@ public class CustomerController {
         orderService.changeOrderStatusToDone(order);
     }
 
-
+    @CrossOrigin
     @PutMapping("pay-credit")
-    public void payWithCredit(@RequestBody PayDto payDto) {
+    public String payWithCredit(@RequestBody PayDto payDto) {
         customerService.credit(payDto.getOrderId(), payDto.getAmount());
+        Captcha captcha = new Captcha(payDto.getCaptcha());
+        if (!captcha.isValid()) {
+            throw new CustomizedIllegalArgumentException("captcha is not valid");
+        }
+        if (!payDto.checkCardNumber()) {
+            throw new CustomizedIllegalArgumentException("cart number must be 16 digit");
+        }
+        return "Success!";
 
     }
+
+
 
 
     @PutMapping("pay-online")
     public void payWithOnline(@RequestBody PayDto payDto) {
         customerService.online(payDto.getOrderId(), payDto.getAmount());
     }
+
+
+
+    @GetMapping("customer-order-profile")                                             //ok
+    public List<OrderDto> customerOrderProfile(@RequestParam Map<String, String> predicateMap) {
+        List<Order> orderList = customerService.customerOrderProfile(predicateMap);
+        List<OrderDto> orderDtoList = orderDtoList(orderList);
+        return orderDtoList;
+    }
+
+
+
+
+
+    @GetMapping("customer-credit-by-id/{customerId}")                                     //ok
+    public Credit findCreditByCustomerId(@PathVariable Long customerId){
+        return customerService.findCreditByCustomerId(customerId);
+    }
+
+
+    private List<OrderDto> orderDtoList(List<Order> orderList) {
+        List<OrderDto> orderDtoList = new ArrayList<>();
+        for (Order o : orderList) {
+            orderDtoList.add(modelMapper.map(o,OrderDto.class));
+        }
+        return orderDtoList;
+    }
+
+
+
 
 
 }
