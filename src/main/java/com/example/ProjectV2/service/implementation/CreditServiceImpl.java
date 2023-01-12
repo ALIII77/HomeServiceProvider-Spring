@@ -9,6 +9,7 @@ import com.example.ProjectV2.exception.NotEnoughAmountException;
 import com.example.ProjectV2.exception.NotFoundException;
 import com.example.ProjectV2.repository.CreditRepository;
 import com.example.ProjectV2.service.CreditService;
+import com.example.ProjectV2.service.CustomerService;
 import com.example.ProjectV2.service.OrderService;
 import com.example.ProjectV2.service.TransactionService;
 import jakarta.validation.Valid;
@@ -25,6 +26,8 @@ public class CreditServiceImpl implements CreditService {
     private final ApplicationContext applicationContext;
     private final CreditRepository creditRepository;
     private final TransactionService transactionService;
+
+    private final CustomerService customerService;
 
 
 
@@ -47,7 +50,7 @@ public class CreditServiceImpl implements CreditService {
     @Transactional
     @Override
     public void deposit(@Valid Credit credit, double amount) {
-        credit.setAmount(credit.getAmount()+((amount*70)/100));
+        credit.setAmount(credit.getAmount()+amount);
         creditRepository.save(credit);
     }
 
@@ -69,6 +72,7 @@ public class CreditServiceImpl implements CreditService {
                 , amount,findOrder, TransactionType.CART_TO_CART
         );
         transactionService.save(transaction);
+        findOrder.setOrderStatus(OrderStatus.PAID);
         findOrder.setTransaction(transaction);
         orderService().save(findOrder);
     }
@@ -83,15 +87,32 @@ public class CreditServiceImpl implements CreditService {
         }
         Expert findExpert = findOrder.getExpert();
         Credit destinationCredit = findExpert.getCredit();
-        deposit(destinationCredit,amount);
+        deposit(destinationCredit,((amount*70)/100));
         Transaction transaction = new Transaction(
                 findOrder.getCustomer().getCredit(),findOrder.getExpert().getCredit()
                 , amount,findOrder, TransactionType.ONLINE
         );
         transactionService.save(transaction);
         findOrder.setTransaction(transaction);
+        findOrder.setOrderStatus(OrderStatus.PAID);
         orderService().save(findOrder);
     }
+
+
+
+    @Override
+    public Credit findCreditByCustomerId (Long customerId) {
+        return creditRepository.findCreditByCustomerId(customerId);
+    }
+
+
+    @Override
+    public double findCreditByExpertId (Long expertId) {
+        Credit findCredit = creditRepository.findCreditByExpertId(expertId);
+        return findCredit.getAmount();
+    }
+
+
 
 
     private OrderService orderService(){

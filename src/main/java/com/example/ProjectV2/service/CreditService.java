@@ -15,4 +15,8 @@ public interface CreditService {
 
     void online (Long orderId , double amount);
 
+    Credit findCreditByCustomerId(Long customerId);
+
+    double findCreditByExpertId (Long expertId);
+
 }
