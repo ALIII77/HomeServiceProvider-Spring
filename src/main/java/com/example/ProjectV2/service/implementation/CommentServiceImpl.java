@@ -10,6 +10,7 @@ import com.example.ProjectV2.repository.CommentRepository;
 import com.example.ProjectV2.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -18,15 +19,16 @@ import java.util.Optional;
 @org.springframework.stereotype.Service
 public class CommentServiceImpl implements CommentService {
 
+    private final ApplicationContext applicationContext;
     private final CommentRepository commentRepository;
     private final ExpertService expertService;
-    private final OrderService orderService;
 
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, ExpertService expertService, OrderService orderService) {
+    public CommentServiceImpl(ApplicationContext applicationContext, CommentRepository commentRepository
+            , ExpertService expertService) {
+        this.applicationContext = applicationContext;
         this.commentRepository = commentRepository;
         this.expertService = expertService;
-        this.orderService = orderService;
     }
 
 
@@ -41,6 +43,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public void addComment(Comment newComment, String expertUsername,Long orderId) {
+        OrderService orderService = applicationContext.getBean(OrderService.class);
         Expert findExpert = expertService.findExpertByUsername(expertUsername)
                 .orElseThrow(() -> new NotFoundException("Not exists expert to add comment"));
         Order findOrder = orderService.findOrderById(orderId).orElseThrow(
@@ -64,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<double> findScoreByExpertId(Long expertId) {
+    public List<Double> findScoreByExpertId(Long expertId) {
         return commentRepository.findScoreByExpertId(expertId);
     }
 

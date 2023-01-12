@@ -14,7 +14,7 @@ public interface CommentService {
 
     Optional<Comment> findCommentById(Long id);
 
-    List<double> findScoreByExpertId(Long expertId);
+    List<Double> findScoreByExpertId(Long expertId);
 
 
 }
