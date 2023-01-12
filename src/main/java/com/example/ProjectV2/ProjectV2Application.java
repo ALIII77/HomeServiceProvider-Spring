@@ -1,5 +1,6 @@
 package com.example.ProjectV2;
 
+import com.example.ProjectV2.config.SecurityConfig;
 import com.example.ProjectV2.entity.Admin;
 import com.example.ProjectV2.repository.AdminRepository;
 import com.example.ProjectV2.service.AdminService;
@@ -9,6 +10,7 @@ import jakarta.persistence.EntityManager;
 import org.apache.catalina.core.ApplicationContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
