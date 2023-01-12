@@ -25,4 +25,8 @@ public interface OfferService {
 
     void editOffer(Offer offer, LocalDateTime startDate, LocalDateTime endDate, double price);
 
+    Integer countOfferByExpertId(Long expertId);
+
+
+
 }

@@ -104,6 +104,11 @@ public class OfferServiceImpl implements OfferService {
         offerRepository.save(offer);
     }
 
+    @Override
+    public Integer countOfferByExpertId(Long expertId) {
+        return offerRepository.countOfferByExpertId(expertId);
+    }
+
 
     private void checkConstraint(Order order, Expert expert, Offer offer) {
 
@@ -124,4 +129,9 @@ public class OfferServiceImpl implements OfferService {
             throw new CustomizedIllegalArgumentException("this expert is sended offert to this order!!!!!");
         }
     }
+
+
+
+
+
 }
