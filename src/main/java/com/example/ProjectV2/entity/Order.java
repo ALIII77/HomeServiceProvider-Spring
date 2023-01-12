@@ -5,6 +5,7 @@ import com.example.ProjectV2.entity.enums.OrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -19,6 +20,8 @@ import java.util.Set;
 @Table(name = "order_table")
 public class Order extends BaseEntity<Long> {
 
+    @CreationTimestamp
+    private LocalDateTime orderRegistrationDate;
 
     @ManyToOne
     private Customer customer;

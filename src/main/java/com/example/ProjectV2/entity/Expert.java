@@ -2,21 +2,23 @@ package com.example.ProjectV2.entity;
 
 import com.example.ProjectV2.entity.enums.ExpertStatus;
 import com.example.ProjectV2.entity.enums.PersonType;
+import com.example.ProjectV2.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class Expert extends Person {
+public class Expert extends Person implements UserDetails {
 
     @ManyToMany(mappedBy = "expertSet", fetch = FetchType.EAGER)
     @ToString.Exclude
@@ -90,6 +92,8 @@ public class Expert extends Person {
     private void prePersist() {
         expertStatus = ExpertStatus.NEW;
         setPersonType(PersonType.EXPERT);
+        setRole(Role.ROLE_EXPERT);
+        setEnabled(false);
     }
 
 
@@ -104,4 +108,29 @@ public class Expert extends Person {
     public int hashCode() {
         return Objects.hash(super.hashCode());
     }
+
+
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(getRole().name()));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+
 }

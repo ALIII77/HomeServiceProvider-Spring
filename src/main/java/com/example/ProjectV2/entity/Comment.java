@@ -2,6 +2,7 @@ package com.example.ProjectV2.entity;
 
 
 import com.example.ProjectV2.base.BaseEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -27,6 +28,7 @@ public class Comment extends BaseEntity<Long> {
     @ToString.Exclude
     private Expert expert;
 
+    @Nullable
     private String text;
 
     @Column(nullable = false)
@@ -38,7 +40,7 @@ public class Comment extends BaseEntity<Long> {
     @ToString.Exclude
     private Order order;
 
-    public Comment(String text, int score) {
+    public Comment( String text, int score) {
         this.text = text;
         this.score = score;
     }

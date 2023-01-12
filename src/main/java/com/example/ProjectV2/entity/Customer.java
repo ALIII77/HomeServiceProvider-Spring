@@ -1,20 +1,22 @@
 package com.example.ProjectV2.entity;
 
 import com.example.ProjectV2.entity.enums.PersonType;
+import com.example.ProjectV2.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class Customer extends Person {
+public class Customer extends Person implements UserDetails   {
 
 
     @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
@@ -28,6 +30,8 @@ public class Customer extends Person {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
     @ToString.Exclude
     private Set<Comment> commentSet;
+
+
 
     public Customer(String firstName, String lastName, String email, String username, String password) {
         super(firstName, lastName, email, username, password);
@@ -61,12 +65,14 @@ public class Customer extends Person {
     @PrePersist
     public void prePersist(){
         setPersonType(PersonType.CUSTOMER);
+        setRole(Role.ROLE_CUSTOMER);
+        setEnabled(false);
     }
 
 
 
 
-    //Equals And HashCode
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -78,4 +84,30 @@ public class Customer extends Person {
     public int hashCode() {
         return Objects.hash(super.hashCode());
     }
+
+
+
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(getRole().name()));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+
 }

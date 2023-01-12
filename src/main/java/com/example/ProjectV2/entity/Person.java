@@ -2,6 +2,8 @@ package com.example.ProjectV2.entity;
 
 import com.example.ProjectV2.base.BaseEntity;
 import com.example.ProjectV2.entity.enums.PersonType;
+import com.example.ProjectV2.entity.enums.Role;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -18,7 +20,7 @@ import java.util.Objects;
 @Setter
 @Getter
 @ToString
-public class Person extends BaseEntity<Long> {
+public class Person extends BaseEntity<Long>  {
 
     @Column(nullable = false)
     @NotEmpty(message = "can not be inset space in firstname")
@@ -45,13 +47,24 @@ public class Person extends BaseEntity<Long> {
     @Column(nullable = false)
     @NotEmpty
     @NotNull
-    @Pattern(regexp = "^[A-Za-z0-9._$%^&*#!@\\-/\\\\]{8,8}+$", message = "No match password with pattern")
+    @Pattern(regexp = "^[A-Za-z0-9._$%^&*#!@\\-/\\\\]{8,}+$", message = "No match password with pattern")
     private String password;
 
 
     @Enumerated(EnumType.STRING)
     private PersonType personType;
 
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+
+
+    @Column(name = "verification_code", length = 64)
+    private String verificationCode;
+
+    @Nullable
+    private boolean enabled;
 
     @CreationTimestamp
     private LocalDateTime dateOfRegistration;
@@ -88,4 +101,6 @@ public class Person extends BaseEntity<Long> {
     public int hashCode() {
         return Objects.hash(firstName, lastName, email, username, password);
     }
+
+
 }
