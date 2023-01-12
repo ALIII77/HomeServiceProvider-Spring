@@ -13,7 +13,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
 
     @Query("select c.score from Comment as c where c.expert.id=:expertId")
-    List<double> findScoreByExpertId(Long expertId);
+    List<Double> findScoreByExpertId(Long expertId);
 
 
 }

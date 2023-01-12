@@ -1,6 +1,7 @@
 package com.example.ProjectV2.repository;
 
 import com.example.ProjectV2.entity.Offer;
+import com.example.ProjectV2.entity.enums.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -20,5 +21,7 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 
     Optional<Offer> findOfferByOrderIdAndExpertId(Long orderId, Long expertId);
 
+    @Query("select count(o.id) from Offer as o where o.expert.id=:expertId")
+    Integer countOfferByExpertId(Long expertId);
 
 }

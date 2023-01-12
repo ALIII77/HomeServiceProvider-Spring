@@ -5,6 +5,7 @@ import com.example.ProjectV2.entity.Expert;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +19,19 @@ public interface ExpertRepository extends JpaRepository<Expert, Long>, JpaSpecif
     Optional<Expert> findExpertByUsername(String username);
 
     void deleteExpertByUsername(String username);
+
+
+    Optional<Expert> findExpertByVerificationCode(String code);
+
+
+
+
+
+
+
+
+
+
 
 
 
