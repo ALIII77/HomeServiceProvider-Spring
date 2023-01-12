@@ -12,12 +12,6 @@ import org.springframework.web.context.request.WebRequest;
 public class GlobalMvcExceptionHandler {
 
 
-    @ExceptionHandler(value = RuntimeException.class)
-    public ResponseEntity<Object> handleRuntimeException(Exception ex, WebRequest request) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
-
-
     @ExceptionHandler(value = NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
@@ -63,6 +57,11 @@ public class GlobalMvcExceptionHandler {
     @ExceptionHandler(value = UsernameNotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(UsernameNotFoundException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = UnAvailableServiceException.class)
+    public ResponseEntity<Object> handleNotFoundException(UnAvailableServiceException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
     }
 
 
