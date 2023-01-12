@@ -1,5 +1,6 @@
 package com.example.ProjectV2.dto.Expert;
 
+import com.example.ProjectV2.entity.Expert;
 import com.example.ProjectV2.entity.Offer;
 import com.example.ProjectV2.entity.Order;
 import com.example.ProjectV2.entity.builder.OfferBuilder;
@@ -30,6 +31,12 @@ public class AddOfferByExpertDto {
         offer.setEndDate(endJobDate);
         offer.setPrice(price);
         offer.setOrder(order);
+
+        Expert expert = new Expert();
+        expert.setId(expertId);
+
+        offer.setExpert(expert);
+
         return offer;
     }
 }

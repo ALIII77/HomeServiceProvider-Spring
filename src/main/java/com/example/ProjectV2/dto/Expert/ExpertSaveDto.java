@@ -2,15 +2,13 @@ package com.example.ProjectV2.dto.Expert;
 
 import com.example.ProjectV2.entity.Expert;
 import com.example.ProjectV2.entity.builder.ExpertBuilder;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class ExpertSaveDto {
     private String firstName;
     private String lastName;
