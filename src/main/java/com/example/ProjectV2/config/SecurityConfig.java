@@ -2,6 +2,8 @@ package com.example.ProjectV2.config;
 
 
 import com.example.ProjectV2.repository.AdminRepository;
+import com.example.ProjectV2.repository.CustomerRepository;
+import com.example.ProjectV2.repository.ExpertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +13,9 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 
@@ -22,58 +25,42 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final AdminRepository adminRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+    private final ExpertRepository expertRepository;
+    private final CustomerRepository customerRepository;
 
-    public SecurityConfig(AdminRepository adminRepository, BCryptPasswordEncoder passwordEncoder) {
+    public SecurityConfig(AdminRepository adminRepository, PasswordEncoder passwordEncoder, ExpertRepository expertRepository, CustomerRepository customerRepository) {
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
+        this.expertRepository = expertRepository;
+        this.customerRepository = customerRepository;
     }
 
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http.authorizeRequests().anyRequest().permitAll();
         http
-//                .csrf().disable()
-//                .authorizeHttpRequests().requestMatchers("*/admin/**").authenticated()
-//                .and()
-//                .authorizeHttpRequests().anyRequest().permitAll()
-//                .and().formLogin();
 
                 .csrf().disable()
-                .authorizeHttpRequests().requestMatchers("*/admin/**").hasRole("ROLE_ADMIN")
+
+
+                .authorizeHttpRequests().requestMatchers("/admin/**").hasRole("ADMIN")
                 .and()
-                .authorizeHttpRequests().requestMatchers("*/expert/**").hasRole("ROLE_EXPERT")
+                .authorizeHttpRequests().requestMatchers("/expert/**").hasRole("EXPERT")
                 .and()
-                .authorizeHttpRequests().requestMatchers("*/customer/**").hasRole("ROLE_CUSTOMER")
+                .authorizeHttpRequests().requestMatchers("/customer/pay-credit/**").permitAll()
+                .and()
+                .authorizeHttpRequests().requestMatchers("/customer/**").hasRole("CUSTOMER")
+                .and()
+                .authorizeHttpRequests().anyRequest().permitAll()
                 .and()
                 .httpBasic();
-
-//                .authorizeHttpRequests().requestMatchers("*/admin/**").authenticated()
-//                .and()
-//                .authorizeHttpRequests().anyRequest().permitAll()
-//                .and()
-//                .httpBasic();
-
-//                .authorizeHttpRequests().anyRequest().authenticated()
-//                .and()
-//                .formLogin();
-
-
-//                .authorizeHttpRequests().requestMatchers("").hasRole("admin")                  /******/
-
-//                .authorizeHttpRequests().requestMatchers("").hasAnyRole()
-
-//                .authorizeHttpRequests().requestMatchers("*/admin/**").permitAll();
-
-//                .authorizeHttpRequests().anyRequest().permitAll();
-
-
-//                .authorizeHttpRequests().requestMatchers("*/admin/**").hasAnyRole("ADMIN").anyRequest().authenticated();       //ok
 
 
         return http.build();
     }
+
+
 
     @Bean
     public AuthenticationManager authenticateManager(AuthenticationConfiguration authenticationConfiguration) {
@@ -90,6 +77,16 @@ public class SecurityConfig {
             throws Exception {
         auth.userDetailsService((username) -> adminRepository
                         .findAdminByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException(String.format("This %s notFound!", username))))
+                .passwordEncoder(passwordEncoder)
+                .and()
+                .userDetailsService((username) -> expertRepository
+                        .findExpertByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException(String.format("This %s notFound!", username))))
+                .passwordEncoder(passwordEncoder)
+                .and()
+                .userDetailsService((username) -> customerRepository
+                        .findCustomerByUsername(username)
                         .orElseThrow(() -> new UsernameNotFoundException(String.format("This %s notFound!", username))))
                 .passwordEncoder(passwordEncoder);
     }
