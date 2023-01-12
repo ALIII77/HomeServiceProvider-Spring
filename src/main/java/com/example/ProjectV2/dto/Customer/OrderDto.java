@@ -2,6 +2,7 @@ package com.example.ProjectV2.dto.Customer;
 
 import com.example.ProjectV2.entity.Order;
 import com.example.ProjectV2.entity.builder.OrderBuilder;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class OrderDto {
     private Long customerId;
     private String subServiceName;
 
+    @JsonIgnore
     public Order getOrder(){
         Order order = new OrderBuilder()
                 .jobDescription(description)

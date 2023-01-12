@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class SortedOffersDto {
+public class OffersDto {
     private String expertUsername;
     private LocalDateTime startJobDate;
     private LocalDateTime endJobDate;
