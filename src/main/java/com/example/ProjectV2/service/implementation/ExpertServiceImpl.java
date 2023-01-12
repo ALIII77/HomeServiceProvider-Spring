@@ -7,10 +7,20 @@ import com.example.ProjectV2.exception.*;
 import com.example.ProjectV2.repository.ExpertRepository;
 import com.example.ProjectV2.repository.SubServiceRepository;
 import com.example.ProjectV2.service.*;
+import com.example.ProjectV2.utils.Convertor;
 import com.example.ProjectV2.utils.QueryUtil;
+import com.example.ProjectV2.utils.SendEmail;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.SetJoin;
+import jakarta.persistence.criteria.Subquery;
 import jakarta.validation.Valid;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,30 +29,32 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @org.springframework.stereotype.Service
 public class ExpertServiceImpl implements ExpertService {
 
+    private final ApplicationContext applicationContext;
     private final ExpertRepository expertRepository;
     private final SubServiceRepository subServiceRepository;
-    private final OfferService offerService;
     private final CustomerService customerService;
-    private final OrderService orderService;
+    private final PasswordEncoder passwordEncoder;
+    private final JavaMailSender mailSender;
+    private final SendEmail sendEmail;
 
 
     @Autowired
-    public ExpertServiceImpl(ExpertRepository expertRepository
-            , SubServiceRepository subServiceRepository, OfferService offerService
-            , CustomerService customerService, OrderService orderService) {
+    public ExpertServiceImpl(ApplicationContext applicationContext, ExpertRepository expertRepository
+            , SubServiceRepository subServiceRepository
+            , CustomerService customerService, PasswordEncoder passwordEncoder
+            , JavaMailSender mailSender, SendEmail sendEmail) {
+        this.applicationContext = applicationContext;
         this.expertRepository = expertRepository;
         this.subServiceRepository = subServiceRepository;
-        this.offerService = offerService;
         this.customerService = customerService;
-        this.orderService = orderService;
+        this.passwordEncoder = passwordEncoder;
+        this.mailSender = mailSender;
+        this.sendEmail = sendEmail;
     }
 
 
@@ -50,6 +62,14 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public Expert save(@Valid Expert expert) {
         if (checkUsername(expert.getUsername())) {
+            Credit credit = new Credit();
+            expert.setCredit(credit);
+            String encodedPassword = passwordEncoder.encode(expert.getPassword());
+            expert.setPassword(encodedPassword);
+
+            String randomCode = RandomString.make(64);
+            expert.setVerificationCode(randomCode);
+            expert.setEnabled(false);
             return expertRepository.save(expert);
         }
         throw new NotUniqueException("expert username is exists");
@@ -63,11 +83,11 @@ public class ExpertServiceImpl implements ExpertService {
         if (expertOptional.isEmpty()) {
             throw new NotFoundException("Not found expert to change password");
         }
-        if (Objects.equals(expertOptional.get().getPassword(), oldPassword)) {
-            Expert expert = expertOptional.get();
+        Expert expert = expertOptional.get();
+        if (passwordEncoder.matches(oldPassword,expert.getPassword())) {
             if (expert.getExpertStatus() == ExpertStatus.CONFIRMED) {
-                if (!(oldPassword.equals(newPassword))) {
-                    expert.setPassword(newPassword);
+                if (!passwordEncoder.matches(newPassword,expert.getPassword())) {
+                    expert.setPassword(passwordEncoder.encode(newPassword));
                     expertRepository.save(expert);
                 }
                 throw new PermissionDeniedException("Enter new password that not equal with old password");
@@ -169,6 +189,9 @@ public class ExpertServiceImpl implements ExpertService {
             throw new NotFoundException("Not found expert to confirm by admin");
         }
         Expert findExpert = expertOptional.get();
+        if (findExpert.getExpertStatus()!=ExpertStatus.AWAITING_CONFIRM){
+            throw new CustomizedIllegalArgumentException("Expert status must be in AWAITING_CONFIRM");
+        }
         findExpert.setExpertStatus(ExpertStatus.CONFIRMED);
         expertRepository.save(findExpert);
     }
@@ -176,6 +199,8 @@ public class ExpertServiceImpl implements ExpertService {
     @Transactional
     @Override
     public void selectExpert(Long offerId, Long customerId) {
+        OrderService orderService = applicationContext.getBean(OrderService.class);
+        OfferService offerService = applicationContext.getBean(OfferService.class);
         Offer findOffer = offerService.findOfferById(offerId).orElseThrow(() -> new NotFoundException("not found offer"));
         Customer findCustomer = customerService.findById(customerId).orElseThrow(() -> new NotFoundException("not found customer"));
         Order order = findOffer.getOrder();
@@ -219,6 +244,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Transactional
     @Override
     public void setScoreAfterJobEnd(Long offerId) {
+        OfferService offerService = applicationContext.getBean(OfferService.class);
         Offer findOffer = offerService.findOfferById(offerId).get();
         long hours = ChronoUnit.HOURS.between(findOffer.getEndDate(), LocalDateTime.now());
         Expert findExpert = findOffer.getExpert();
@@ -283,26 +309,124 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public List<Order> showAllOrderByExpertSubService(Long expertId) {
+        OrderService orderService = applicationContext.getBean(OrderService.class);
         return orderService.showAllOrderByExpertSubService(expertId);
     }
 
     @Override
     public List<Order> showAllOrdersWaitingOffer(OrderStatus orderStatus) {
+        OrderService orderService = applicationContext.getBean(OrderService.class);
         return orderService.showAllOrdersWaitingOffer(orderStatus);
     }
+
+    @Override
+    public List<Order> showAllOrderByExpertSubServiceAndOrderStatus(Long expertId, OrderStatus orderStatus) {
+        OrderService orderService = applicationContext.getBean(OrderService.class);
+        return orderService.showAllOrderByExpertSubServiceAndOrderStatus(expertId,orderStatus);
+    }
+
+
 
 
     @Override
     public List<Expert> searchExpert(Map<String, String> predicateMap) {
         return expertRepository.findAll(returnSpecification(predicateMap));
     }
-
     Specification<Expert> returnSpecification(Map<String, String> predicateMap) {
         Specification<Expert> specification = Specification.where(null);
         for (Map.Entry<String, String> entry : predicateMap.entrySet()) {
             specification=specification.and((expert, cq, cb) -> cb.equal(expert.get(entry.getKey()), entry.getValue()));
         }
         return specification;
+    }
+
+
+    @Override
+    public boolean verify(String code) {
+        Expert expert = expertRepository.findExpertByVerificationCode(code)
+                .orElseThrow(()->new CustomizedIllegalArgumentException("code not found"));
+        if ( expert.isEnabled()) {
+            throw new CustomizedIllegalArgumentException(" customer is enable!");
+        } else {
+            expert.setVerificationCode(null);
+            expert.setEnabled(true);
+            expert.setExpertStatus(ExpertStatus.AWAITING_CONFIRM);
+            expertRepository.save(expert);
+            return true;
+        }
+    }
+
+    @Override
+    public List<Expert>findAllExpertByDateRegistration(LocalDateTime localDateTime) {
+        List<Expert>findAllExpert= expertRepository.findAll();
+        List<Expert>resultExpert=new ArrayList<>();
+        for (Expert e:findAllExpert) {
+            if (e.getDateOfRegistration().equals(localDateTime)){
+                resultExpert.add(e);
+            }
+        }
+        if (resultExpert.isEmpty()) {
+            throw new NotFoundException("Not exists customer with registration date  = "+ localDateTime);
+        } else return resultExpert;
+    }
+
+
+
+    @Transactional
+    @Override
+    public List<Expert> expertReport (Map<String, String> predicateMap){
+        List<Expert>expertList = expertRepository.findAll(expertDoOrderSpecification(predicateMap));
+        return expertList;
+    }
+
+
+
+    public Specification<Expert> expertDoOrderSpecification(Map<String, String> predicateMap) {
+        Specification<Expert> specification = Specification.where(null);
+        for (Map.Entry<String, String> entry : predicateMap.entrySet()) {
+            specification = specification.and((expertRoot, cq, cb) ->
+                    switch (entry.getKey()) {
+
+                        case "expertId" -> cb.equal(expertRoot.get(Expert_.id), Convertor.toLong(entry.getValue()));
+
+                        case "from" ->
+                                cb.greaterThanOrEqualTo(expertRoot.get(Expert_.dateOfRegistration), Convertor.toLocalDateTime(entry.getValue()));
+
+                        case "to" ->
+                                cb.lessThanOrEqualTo(expertRoot.get(Expert_.dateOfRegistration), Convertor.toLocalDateTime(entry.getValue()));
+
+                        case "orders" -> {
+                            cq.distinct(true);
+                            Subquery<Long> subQuery = cq.subquery(Long.class);
+                            Root<Order> fromOrder = subQuery.from(Order.class);
+                            subQuery.select(cb.count(fromOrder.get(Order_.id)));
+                            subQuery.where(cb.equal(expertRoot.get(Expert_.id),fromOrder.get(Order_.expert).get(Expert_.id)));
+                            yield cb.greaterThanOrEqualTo(subQuery,Convertor.toLong(entry.getValue()));
+                        }
+
+                        default -> throw new CustomizedIllegalArgumentException("not match query!");
+                    });
+        }
+        return specification;
+
+    }
+
+
+    private CreditService creditService() {
+        return applicationContext.getBean(CreditService.class);
+    }
+
+
+
+    @Override
+    public List<Order> expertOrderProfile(Map<String, String> predicateMap) {
+        OrderService orderService = applicationContext.getBean(OrderService.class);
+        return orderService.expertOrderProfile(predicateMap);
+    }
+
+    @Override
+    public double findCreditByExpertId(Long expertId) {
+        return creditService().findCreditByExpertId(expertId);
     }
 
 

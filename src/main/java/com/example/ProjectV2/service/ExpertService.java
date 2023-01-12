@@ -1,5 +1,6 @@
 package com.example.ProjectV2.service;
 
+import com.example.ProjectV2.entity.Credit;
 import com.example.ProjectV2.entity.Customer;
 import com.example.ProjectV2.entity.Expert;
 import com.example.ProjectV2.entity.Order;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -57,6 +59,21 @@ public interface ExpertService {
     List<Order> showAllOrdersWaitingOffer(OrderStatus orderStatus);
 
     List<Expert> searchExpert(Map<String, String> predicateMap);
+
+    boolean verify(String code);
+
+    List<Expert>findAllExpertByDateRegistration(LocalDateTime localDateTime);
+
+
+    List<Expert> expertReport(Map<String, String> predicateMap);
+
+    List<Order>showAllOrderByExpertSubServiceAndOrderStatus(Long expertId, OrderStatus orderStatus);
+
+    List<Order>expertOrderProfile(Map<String,String>predicateMap);
+
+    double findCreditByExpertId(Long expertId);
+
+
 
 
 }
