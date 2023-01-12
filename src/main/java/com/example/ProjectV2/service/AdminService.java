@@ -1,9 +1,12 @@
 package com.example.ProjectV2.service;
 
+import com.example.ProjectV2.dto.Admin.HistoryServiceDto;
 import com.example.ProjectV2.entity.*;
+import com.example.ProjectV2.entity.enums.OrderStatus;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @org.springframework.stereotype.Service
@@ -44,5 +47,9 @@ public interface AdminService {
     void expertConfirm(Expert expert);
 
     void deleteSubService(SubService subService);
+
+    List<HistoryServiceDto> historyService(Map<String, String> predicateMap);
+
+    List<HistoryServiceDto> totalHistoryOfService(OrderStatus orderStatus, Long expertId);
 
 }

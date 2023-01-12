@@ -1,6 +1,8 @@
 package com.example.ProjectV2.service.implementation;
 
+import com.example.ProjectV2.dto.Admin.HistoryServiceDto;
 import com.example.ProjectV2.entity.*;
+import com.example.ProjectV2.entity.enums.OrderStatus;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
 import com.example.ProjectV2.exception.NotUniqueException;
@@ -8,30 +10,38 @@ import com.example.ProjectV2.repository.*;
 import com.example.ProjectV2.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
 @org.springframework.stereotype.Service
 public class AdminServiceImpl implements AdminService {
 
+    private final ApplicationContext applicationContext;
     private final AdminRepository adminRepository;
     private final SubServiceService subServiceService;
     private final ServiceService serviceService;
     private final CustomerService customerService;
     private final ExpertService expertService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AdminServiceImpl(AdminRepository adminRepository, SubServiceService subServiceService, ServiceService serviceService,
-                            CustomerService customerService, ExpertService expertService) {
+    public AdminServiceImpl(ApplicationContext applicationContext, AdminRepository adminRepository, SubServiceService subServiceService, ServiceService serviceService,
+                            CustomerService customerService, ExpertService expertService, PasswordEncoder passwordEncoder) {
+        this.applicationContext = applicationContext;
         this.adminRepository = adminRepository;
         this.serviceService = serviceService;
         this.subServiceService = subServiceService;
         this.customerService = customerService;
         this.expertService = expertService;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -39,6 +49,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Admin save(@Valid Admin admin) {
         if (checkUsername(admin.getUsername())) {
+            admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+            admin.setEnabled(false);
             return adminRepository.save(admin);
         }
         throw new NotUniqueException("Username admin must be unique");
@@ -51,14 +63,17 @@ public class AdminServiceImpl implements AdminService {
         Admin findAdmin = adminRepository.findAdminByUsername(admin.getUsername())
                 .orElseThrow(() -> new NotFoundException("Not found admin to change password"));
 
-        if (!admin.getPassword().equals(findAdmin.getPassword())) {
+//        findAdmin.setPassword(passwordEncoder.encode(findAdmin.getPassword()));
+
+        if (!passwordEncoder.matches(admin.getPassword(),findAdmin.getPassword())) {
             throw new CustomizedIllegalArgumentException(" incorrect password ");
         }
         System.out.println("admin Find!");
-        if ((findAdmin.getPassword().equals(newPassword))) {
+
+        if (passwordEncoder.matches(newPassword,findAdmin.getPassword())) {
             throw new CustomizedIllegalArgumentException("Enter new password that not equal with old password");
         }
-        findAdmin.setPassword(newPassword);
+        findAdmin.setPassword(passwordEncoder.encode(newPassword));
         adminRepository.save(findAdmin);
     }
 
@@ -170,6 +185,20 @@ public class AdminServiceImpl implements AdminService {
 
     boolean checkUsername(String username) {
         return adminRepository.findAdminByUsername(username).isEmpty();
+    }
+
+
+    @Override
+    public List<HistoryServiceDto> historyService(Map<String, String> predicateMap) {
+        OrderService orderService = applicationContext.getBean(OrderService.class);
+        return orderService.historyService(predicateMap);
+    }
+
+    @Override
+    public List<HistoryServiceDto> totalHistoryOfService(OrderStatus orderStatus, Long expertId) {
+        OrderService orderService = applicationContext.getBean(OrderService.class);
+        return orderService.totalHistoryOfService(orderStatus,expertId);
+
     }
 
 
