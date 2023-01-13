@@ -167,7 +167,7 @@ public class CustomerController {
 
 
 
-    @GetMapping("customer-order-profile")                                             //ok
+    @GetMapping("customer-order-profile")
     public List<OrderDto> customerOrderProfile(@RequestParam Map<String, String> predicateMap) {
         List<Order> orderList = customerService.customerOrderProfile(predicateMap);
         List<OrderDto> orderDtoList = orderDtoList(orderList);
@@ -178,7 +178,7 @@ public class CustomerController {
 
 
 
-    @GetMapping("customer-credit-by-id/{customerId}")                                     //ok
+    @GetMapping("customer-credit-by-id/{customerId}")
     public Credit findCreditByCustomerId(@PathVariable Long customerId){
         return customerService.findCreditByCustomerId(customerId);
     }
