@@ -43,14 +43,15 @@ public class SecurityConfig {
 
                 .csrf().disable()
 
-
                 .authorizeHttpRequests().requestMatchers("/admin/**").hasRole("ADMIN")
                 .and()
                 .authorizeHttpRequests().requestMatchers("/expert/**").hasRole("EXPERT")
                 .and()
+                .authorizeHttpRequests().requestMatchers("/customer/**").hasRole("CUSTOMER")
+                .and()
                 .authorizeHttpRequests().requestMatchers("/customer/pay-credit/**").permitAll()
                 .and()
-                .authorizeHttpRequests().requestMatchers("/customer/**").hasRole("CUSTOMER")
+                .authorizeHttpRequests().requestMatchers("/customer/pay-online/**").permitAll()
                 .and()
                 .authorizeHttpRequests().anyRequest().permitAll()
                 .and()
