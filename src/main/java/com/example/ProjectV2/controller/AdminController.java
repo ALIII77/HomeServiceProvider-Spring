@@ -6,6 +6,7 @@ import com.example.ProjectV2.entity.*;
 import com.example.ProjectV2.service.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -32,8 +33,9 @@ public class AdminController {
 
 
     @PutMapping("change-password-admin")
-    public void changePassword(@RequestBody AdminChangePasswordDto adminChangePasswordDto) {
-        adminService.changeAdminPassword(adminChangePasswordDto.getAdmin(), adminChangePasswordDto.getNewPassword());
+    public void changePassword(@RequestBody AdminChangePasswordDto adminChangePasswordDto, Authentication authentication) {
+        Admin admin = (Admin) authentication.getPrincipal();
+        adminService.changeAdminPassword(admin, adminChangePasswordDto.getNewPassword());
     }
 
 
@@ -163,14 +165,11 @@ public class AdminController {
     private List<ExpertDto> expertDtoList(List<Expert> expertList) {
         List<ExpertDto> expertDtoList = new ArrayList<>();
         for (Expert o : expertList) {
-            expertDtoList.add(modelMapper.map(o,ExpertDto.class));
+            expertDtoList.add(modelMapper.map(o, ExpertDto.class));
         }
         return expertDtoList;
 
     }
-
-
-
 
 
     @GetMapping("total-history-of-service")
@@ -179,26 +178,20 @@ public class AdminController {
     }
 
 
-
-
     @GetMapping("history-service")
     public List<HistoryServiceDto> findAllOrderByOrderStatusAndExpertId(@RequestParam Map<String, String> predicateMap) {
         return adminService.historyService(predicateMap);
     }
 
 
-
-
     private List<CustomerDto> customerDtoList(List<Customer> customerList) {
         List<CustomerDto> customerDtoList = new ArrayList<>();
         for (Customer o : customerList) {
-            customerDtoList.add(modelMapper.map(o,CustomerDto.class));
+            customerDtoList.add(modelMapper.map(o, CustomerDto.class));
         }
         return customerDtoList;
 
     }
-
-
 
 
     @GetMapping("customer-report")
@@ -209,24 +202,12 @@ public class AdminController {
     }
 
 
-
-
-
-
     @GetMapping("expert-report")
     public List<ExpertDto> expertReport(@RequestParam Map<String, String> mapPredicate) {
         List<Expert> expertList = expertService.expertReport(mapPredicate);
         List<ExpertDto> expertDtoList = expertDtoList(expertList);
         return expertDtoList;
     }
-
-
-
-
-
-
-
-
 
 
 }

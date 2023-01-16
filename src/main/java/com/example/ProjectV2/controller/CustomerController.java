@@ -10,6 +10,7 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.mail.MessagingException;
 import lombok.*;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,13 +30,13 @@ public class CustomerController {
     private final OfferService offerService;
     private final OrderService orderService;
     private final ExpertService expertService;
-    private final SendEmail sendEmail;
     private final ModelMapper modelMapper;
 
 
     @PutMapping("change-password-customer")
-    public void changePassword(@RequestBody CustomerChangePasswordDto changePasswordDTO) {
-        customerService.changePassword(changePasswordDTO.getCustomer(), changePasswordDTO.getNewPassword());
+    public void changePassword(@RequestBody CustomerChangePasswordDto changePasswordDTO,Authentication authentication) {
+        Customer customer = (Customer)authentication.getPrincipal();
+        customerService.changePassword(customer, changePasswordDTO.getNewPassword());
     }
 
 
@@ -49,7 +50,6 @@ public class CustomerController {
             serviceList.add(serviceDto);
         }
         return serviceList;
-
     }
 
 
@@ -79,23 +79,26 @@ public class CustomerController {
 
 
     @PostMapping("add-order")
-    public void addOrder(@RequestBody OrderDto orderDTO) {
-        orderService.addOrder(orderDTO.getOrder(), orderDTO.getCustomerId(), orderDTO.getSubServiceName());
-
+    public void addOrder(@RequestBody OrderDto orderDTO,Authentication authentication) {
+        Customer customer = (Customer) authentication.getPrincipal();
+        orderService.addOrder(orderDTO.getOrder(), customer.getId(), orderDTO.getSubServiceName());
     }
 
 
     @PutMapping("select-expert")
-    public void selectExpert(@RequestBody SelectExpertDto selectExpert) {
-        expertService.selectExpert(selectExpert.getOfferId(), selectExpert.getCustomerId());
+    public void selectExpert(@RequestBody SelectExpertDto selectExpert,Authentication authentication) {
+        Customer customer = (Customer) authentication.getPrincipal();
+        expertService.selectExpert(selectExpert.getOfferId(), customer.getId());
     }
 
 
     @PostMapping("add-comment")
-    public void addComment(@RequestBody AddCommentByCustomerDto commentDTO) {
+    public void addComment(@RequestBody AddCommentByCustomerDto commentDTO,Authentication authentication) {
+        Customer customer = (Customer)authentication.getPrincipal();
         Comment newComment = new Comment();
         newComment.setText(commentDTO.getText());
         newComment.setScore(commentDTO.getScore());
+        newComment.setCustomer(customer);
         commentService.addComment(newComment, commentDTO.getExpertUsername(), commentDTO.getOrderId());
     }
 
@@ -168,7 +171,9 @@ public class CustomerController {
 
 
     @GetMapping("customer-order-profile")
-    public List<OrderDto> customerOrderProfile(@RequestParam Map<String, String> predicateMap) {
+    public List<OrderDto> customerOrderProfile(@RequestParam Map<String, String> predicateMap, Authentication authentication) {
+        Customer customer = (Customer) authentication.getPrincipal();
+        predicateMap.put("customerId",String.valueOf(customer.getId()));
         List<Order> orderList = customerService.customerOrderProfile(predicateMap);
         List<OrderDto> orderDtoList = orderDtoList(orderList);
         return orderDtoList;
@@ -178,9 +183,10 @@ public class CustomerController {
 
 
 
-    @GetMapping("customer-credit-by-id/{customerId}")
-    public Credit findCreditByCustomerId(@PathVariable Long customerId){
-        return customerService.findCreditByCustomerId(customerId);
+    @GetMapping("customer-credit-by-id")
+    public Credit findCreditByCustomerId(Authentication authentication){
+        Customer customer = (Customer) authentication.getPrincipal();
+        return customerService.findCreditByCustomerId(customer.getId());
     }
 
 
