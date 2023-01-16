@@ -17,7 +17,6 @@ public class OrderDto {
     private String address;
     private double proposedPrice;
     private LocalDateTime executionDate;
-    private Long customerId;
     private String subServiceName;
 
     @JsonIgnore

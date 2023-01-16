@@ -12,14 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CustomerChangePasswordDto {
-    private String username;
-    private String oldPassword;
     private String newPassword;
 
-    public Customer getCustomer(){
-        Customer customer = new Customer();
-        customer.setPassword(oldPassword);
-        customer.setUsername(username);
-        return customer;
-    }
 }

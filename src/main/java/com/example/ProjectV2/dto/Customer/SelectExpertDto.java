@@ -11,5 +11,4 @@ import lombok.Setter;
 @Setter
 public class SelectExpertDto {
     private Long offerId;
-    private Long customerId;
 }
