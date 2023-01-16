@@ -1,5 +1,6 @@
 package com.example.ProjectV2.service.implementation;
 
+import com.example.ProjectV2.dto.Admin.CustomerDto;
 import com.example.ProjectV2.dto.Admin.ExpertDto;
 import com.example.ProjectV2.dto.Admin.HistoryServiceDto;
 import com.example.ProjectV2.entity.*;
@@ -193,14 +194,14 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public List<HistoryServiceDto> historyService (Map<String, String> predicateMap) {
+    public List<HistoryServiceDto> historyService(Map<String, String> predicateMap) {
 
         List<Order> orders = orderRepository.findAll(orderSpecification(predicateMap));
         List<HistoryServiceDto> historyServiceList = new ArrayList<>();
         for (Order o : orders) {
 
-            ExpertDto expertDto =o.getExpert()!=null?modelMapper.map(o.getExpert(),ExpertDto.class):null;
-            HistoryServiceDto historyService = new HistoryServiceDto(o,o.getAcceptedOffer(),expertDto);
+            ExpertDto expertDto = o.getExpert() != null ? modelMapper.map(o.getExpert(), ExpertDto.class) : null;
+            HistoryServiceDto historyService = new HistoryServiceDto(o, o.getAcceptedOffer(), expertDto);
             historyServiceList.add(historyService);
         }
         return historyServiceList;
@@ -227,9 +228,11 @@ public class OrderServiceImpl implements OrderService {
                         case "subServiceId" -> cb.equal(orderRoot.join(Order_.subService).get(SubService_.id)
                                 , Long.valueOf(entry.getValue()));
 
-                        case "customerId" -> cb.equal(orderRoot.get(Order_.customer).get(Customer_.id), Long.parseLong(entry.getValue()));
+                        case "customerId" ->
+                                cb.equal(orderRoot.get(Order_.customer).get(Customer_.id), Long.parseLong(entry.getValue()));
 
-                        case "expertId" -> cb.equal(orderRoot.get(Order_.expert).get(Expert_.id), Long.parseLong(entry.getValue()));
+                        case "expertId" ->
+                                cb.equal(orderRoot.get(Order_.expert).get(Expert_.id), Long.parseLong(entry.getValue()));
 
 
                         default -> throw new CustomizedIllegalArgumentException("not match query!");
@@ -245,21 +248,6 @@ public class OrderServiceImpl implements OrderService {
         } catch (IllegalArgumentException e) {
             throw new CustomizedIllegalArgumentException("order status incorrect!");
         }
-    }
-
-
-
-    private ExpertDto setExpertDto(Order o) {
-        if (o.getExpert() == null) {
-            return null;
-        }
-        return ExpertDto.builder()
-                .firstName(o.getExpert().getFirstName())
-                .lastName(o.getExpert().getLastName())
-                .email(o.getExpert().getEmail())
-                .score(o.getExpert().getScore())
-                .username(o.getExpert().getUsername())
-                .build();
     }
 
 
@@ -303,14 +291,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
     public Specification<Order> expertDoOrderSpecification(Map<String, String> predicateMap) {
         Specification<Order> specification = Specification.where(null);
         for (Map.Entry<String, String> entry : predicateMap.entrySet()) {
             specification = specification.and((orderRoot, cq, cb) ->
                     switch (entry.getKey()) {
 
-                        case "expertId" -> cb.equal(orderRoot.get(Order_.expert).get(Expert_.id), Convertor.toLong(entry.getValue()));
+                        case "expertId" ->
+                                cb.equal(orderRoot.get(Order_.expert).get(Expert_.id), Convertor.toLong(entry.getValue()));
 
                         case "dateNow" ->
                                 cb.greaterThanOrEqualTo(orderRoot.get(Order_.orderRegistrationDate), Convertor.toLocalDateTime(entry.getValue()));
