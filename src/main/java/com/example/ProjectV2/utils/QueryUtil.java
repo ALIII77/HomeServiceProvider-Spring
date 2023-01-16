@@ -11,20 +11,13 @@ import java.util.Set;
 public class QueryUtil {
 
 
-    public static <E> E getResultQuery(TypedQuery<E> query) {
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
     public static <E extends BaseEntity<?>> void checkEntity(E e) {
         Set<ConstraintViolation<E>> constraintViolations = Validate.getValidator().validate(e);
         if (!constraintViolations.isEmpty()) {
             throw new CustomizedIllegalArgumentException(constraintViolations.toString());
         }
     }
+
 
 
 }

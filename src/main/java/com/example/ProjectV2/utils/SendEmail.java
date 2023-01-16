@@ -37,32 +37,9 @@ public  class SendEmail {
             + "\nHome Service Provider.";
 
 
-    public <E extends  Person> void sendVerificationEmail(E e , String siteURL)
-            throws MessagingException, UnsupportedEncodingException {
-        String toAddress = e.getEmail();
-
-
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-
-        helper.setFrom(fromAddress);
-        helper.setTo(toAddress);
-        helper.setSubject(subject);
-
-        content = content.replace("[[name]]", e.getFirstName());
-        String verifyURL = siteURL + "/verify?code=" + e.getVerificationCode();
-
-        content = content.replace("[[URL]]", verifyURL);
-
-        helper.setText(content,true);
-
-        mailSender.send(message);
-
-    }
-
     public <E extends  Person>  void sendSimpleMessage(E e) {
 
-        content = String.format(content,e.getFirstName(),e.getClass().getSimpleName().toLowerCase(), e.getVerificationCode());
+        String content2 = String.format(content,e.getFirstName(),e.getClass().getSimpleName().toLowerCase(), e.getVerificationCode());
         try {
             Unirest.post("https://api.mailgun.net/v3/sandbox46788d8a61f249acb288b2ca69952b92.mailgun.org"
                             + "/messages").
@@ -70,7 +47,7 @@ public  class SendEmail {
                     .queryString("from", "noreply@localhost")
                     .queryString("to", e.getEmail())
                     .queryString("subject", subject)
-                    .queryString("text", content )
+                    .queryString("text", content2 )
                     .asJson();
         } catch (UnirestException ex) {
             throw new UnAvailableServiceException("");

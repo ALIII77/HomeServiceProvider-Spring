@@ -14,12 +14,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ExpertChangePasswordDto {
-    private String username;
     private String oldPassword;
     private String newPassword;
-
-    public Expert getExpert(){
-        return new ExpertBuilder().username(username).password(oldPassword).build();
-    }
-
 }

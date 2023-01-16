@@ -21,7 +21,6 @@ public class AddOfferByExpertDto {
     private LocalDateTime endJobDate;
     private double price;
     private Long orderId;
-    private Long expertId;
 
     public Offer getOffer(){
         Offer offer = new Offer();
@@ -31,12 +30,6 @@ public class AddOfferByExpertDto {
         offer.setEndDate(endJobDate);
         offer.setPrice(price);
         offer.setOrder(order);
-
-        Expert expert = new Expert();
-        expert.setId(expertId);
-
-        offer.setExpert(expert);
-
         return offer;
     }
 }
