@@ -80,12 +80,12 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer1 = customerRepository.findCustomerByUsername(customer.getUsername())
                 .orElseThrow(() -> new NotFoundException("Not found customer to change password"));
 
-        if (!passwordEncoder.matches(customer.getPassword(),customer1.getPassword())) {
+        if (!passwordEncoder.matches(customer.getPassword(), customer1.getPassword())) {
             throw new CustomizedIllegalArgumentException(" incorrect password ");
         }
         System.out.println("customer Find!");
 
-        if (passwordEncoder.matches(newPassword,customer1.getPassword())) {
+        if (passwordEncoder.matches(newPassword, customer1.getPassword())) {
             throw new CustomizedIllegalArgumentException("Enter new password that not equal with old password");
         }
         customer1.setPassword(passwordEncoder.encode(newPassword));
@@ -191,8 +191,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean verify(String code) {
         Customer customer = customerRepository.findCustomerByVerificationCode(code)
-                .orElseThrow(()->new CustomizedIllegalArgumentException("code not match"));
-        if ( customer.isEnabled()) {
+                .orElseThrow(() -> new CustomizedIllegalArgumentException("code not match"));
+        if (customer.isEnabled()) {
             throw new CustomizedIllegalArgumentException(" customer is enable!");
         } else {
             customer.setVerificationCode(null);
@@ -204,32 +204,28 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<Customer> findAllCustomerByDateOfRegistration(LocalDateTime localDateTime) {
-        List<Customer>findAllCustomer= customerRepository.findAll();
-        List<Customer>resultCustomers=new ArrayList<>();
-        for (Customer c:findAllCustomer) {
-            if (c.getDateOfRegistration().equals(localDateTime)){
+        List<Customer> findAllCustomer = customerRepository.findAll();
+        List<Customer> resultCustomers = new ArrayList<>();
+        for (Customer c : findAllCustomer) {
+            if (c.getDateOfRegistration().equals(localDateTime)) {
                 resultCustomers.add(c);
             }
         }
         if (resultCustomers.isEmpty()) {
-            throw new NotFoundException("Not exists customer with registration date  = "+ localDateTime);
+            throw new NotFoundException("Not exists customer with registration date  = " + localDateTime);
         } else return resultCustomers;
     }
 
 
-
-
     @Transactional
     @Override
-    public List<Customer> customerReport (Map<String, String> predicateMap){
-        List<Customer>customerList = customerRepository.findAll(customerSpecification(predicateMap));
+    public List<Customer> customerReport(Map<String, String> predicateMap) {
+        List<Customer> customerList = customerRepository.findAll(customerSpecification(predicateMap));
         return customerList;
     }
 
 
-
-
-    private Specification<Customer> customerSpecification (Map<String, String> predicateMap) {
+    private Specification<Customer> customerSpecification(Map<String, String> predicateMap) {
         Specification<Customer> specification = Specification.where(null);
         for (Map.Entry<String, String> entry : predicateMap.entrySet()) {
             specification = specification.and((customerRoot, cq, cb) ->
@@ -248,16 +244,26 @@ public class CustomerServiceImpl implements CustomerService {
                             Subquery<Long> subQuery = cq.subquery(Long.class);
                             Root<Order> fromOrder = subQuery.from(Order.class);
                             subQuery.select(cb.count(fromOrder.get(Order_.id)));
-                            subQuery.where(cb.equal(customerRoot.get(Customer_.id),fromOrder.get(Order_.customer).get(Customer_.id)));
-                            yield cb.greaterThanOrEqualTo(subQuery,Convertor.toLong(entry.getValue()));
+                            subQuery.where(cb.equal(customerRoot.get(Customer_.id), fromOrder.get(Order_.customer).get(Customer_.id)));
+                            yield cb.greaterThanOrEqualTo(subQuery, Convertor.toLong(entry.getValue()));
                         }
 
+                        case "dateOfRegistration" ->
+                                cb.equal(customerRoot.get(Customer_.dateOfRegistration), Convertor.toLocalDateTime(entry.getValue()));
 
+                        case "email" -> cb.equal(customerRoot.get(Customer_.email), entry.getValue());
 
-//                        @Query("""
-//    select distinct  c  from  Customer as c where (select count (o.id) from Order as o where o.customer.id=c.id)>5
-//""")
+                        case "enabled" ->
+                                cb.equal(customerRoot.get(Customer_.enabled), Convertor.toBoolean(entry.getValue()));
 
+                        case "personType" ->
+                                cb.equal(customerRoot.get(Customer_.PERSON_TYPE), Convertor.toPersonType(entry.getValue()));
+
+                        case "firstName" -> cb.equal(customerRoot.get(Customer_.firstName), entry.getValue());
+
+                        case "lastName" -> cb.equal(customerRoot.get(Customer_.lastName), entry.getValue());
+
+                        case "username" -> cb.equal(customerRoot.get(Customer_.username), entry.getValue());
 
 
                         default -> throw new CustomizedIllegalArgumentException("not match query!");
@@ -265,9 +271,6 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return specification;
     }
-
-
-
 
 
     @Override

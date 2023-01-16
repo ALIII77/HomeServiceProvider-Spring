@@ -63,8 +63,6 @@ public class AdminServiceImpl implements AdminService {
         Admin findAdmin = adminRepository.findAdminByUsername(admin.getUsername())
                 .orElseThrow(() -> new NotFoundException("Not found admin to change password"));
 
-//        findAdmin.setPassword(passwordEncoder.encode(findAdmin.getPassword()));
-
         if (!passwordEncoder.matches(admin.getPassword(),findAdmin.getPassword())) {
             throw new CustomizedIllegalArgumentException(" incorrect password ");
         }
