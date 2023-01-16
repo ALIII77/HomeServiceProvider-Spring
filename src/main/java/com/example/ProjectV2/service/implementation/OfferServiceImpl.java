@@ -4,6 +4,7 @@ import com.example.ProjectV2.entity.Expert;
 import com.example.ProjectV2.entity.Offer;
 import com.example.ProjectV2.entity.Order;
 import com.example.ProjectV2.entity.enums.ExpertStatus;
+import com.example.ProjectV2.entity.enums.OrderStatus;
 import com.example.ProjectV2.exception.CustomizedIllegalArgumentException;
 import com.example.ProjectV2.exception.NotFoundException;
 import com.example.ProjectV2.exception.PermissionDeniedException;
@@ -39,7 +40,7 @@ public class OfferServiceImpl implements OfferService {
 
     @Transactional
     @Override
-    public void addOffer(Offer offer, Long expertId,Long orderId) {
+    public void addOffer(Offer offer, Long expertId, Long orderId) {
 
         ExpertService expertService = applicationContext.getBean(ExpertService.class);
         OrderService orderService = applicationContext.getBean(OrderService.class);
@@ -51,10 +52,16 @@ public class OfferServiceImpl implements OfferService {
         Order findOrder = orderService.findOrderById(orderId)
                 .orElseThrow(() -> new NotFoundException("Not exists order with "
                         + offer.getOrder().getId() + " id  to create a offer for that"));
-        checkConstraint(findOrder, findExpert, offer);
-        offer.setOrder(findOrder);
-        offer.setExpert(findExpert);
-        offerRepository.save(offer);
+        if (
+                findOrder.getOrderStatus() == OrderStatus.WAITING_FOR_SEND_OFFER_EXPERTS ||
+                findOrder.getOrderStatus() == OrderStatus.WAITING_FOR_DECISION_OF_EXPERT) {
+
+            checkConstraint(findOrder, findExpert, offer);
+            offer.setOrder(findOrder);
+            offer.setExpert(findExpert);
+            offerRepository.save(offer);
+        }
+        else throw new CustomizedIllegalArgumentException(" order status invalid");
     }
 
 
@@ -90,7 +97,6 @@ public class OfferServiceImpl implements OfferService {
     public boolean isExistsByOrderIdAndExpertId(Long orderId, Long expertId) {
         return findOfferByOrderIdAndExpertId(orderId, expertId).isPresent();
     }
-
 
 
     @Transactional
@@ -129,9 +135,6 @@ public class OfferServiceImpl implements OfferService {
             throw new CustomizedIllegalArgumentException("this expert is sended offert to this order!!!!!");
         }
     }
-
-
-
 
 
 }

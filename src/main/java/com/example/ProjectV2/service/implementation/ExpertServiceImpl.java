@@ -84,9 +84,9 @@ public class ExpertServiceImpl implements ExpertService {
             throw new NotFoundException("Not found expert to change password");
         }
         Expert expert = expertOptional.get();
-        if (passwordEncoder.matches(oldPassword,expert.getPassword())) {
+        if (passwordEncoder.matches(oldPassword, expert.getPassword())) {
             if (expert.getExpertStatus() == ExpertStatus.CONFIRMED) {
-                if (!passwordEncoder.matches(newPassword,expert.getPassword())) {
+                if (!passwordEncoder.matches(newPassword, expert.getPassword())) {
                     expert.setPassword(passwordEncoder.encode(newPassword));
                     expertRepository.save(expert);
                 }
@@ -189,7 +189,10 @@ public class ExpertServiceImpl implements ExpertService {
             throw new NotFoundException("Not found expert to confirm by admin");
         }
         Expert findExpert = expertOptional.get();
-        if (findExpert.getExpertStatus()!=ExpertStatus.AWAITING_CONFIRM){
+        if (!findExpert.isEnabled()) {
+            throw new CustomizedIllegalArgumentException("First, the expert's email must be confirmed");
+        }
+        if (findExpert.getExpertStatus() != ExpertStatus.AWAITING_CONFIRM) {
             throw new CustomizedIllegalArgumentException("Expert status must be in AWAITING_CONFIRM");
         }
         findExpert.setExpertStatus(ExpertStatus.CONFIRMED);
@@ -322,20 +325,19 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public List<Order> showAllOrderByExpertSubServiceAndOrderStatus(Long expertId, OrderStatus orderStatus) {
         OrderService orderService = applicationContext.getBean(OrderService.class);
-        return orderService.showAllOrderByExpertSubServiceAndOrderStatus(expertId,orderStatus);
+        return orderService.showAllOrderByExpertSubServiceAndOrderStatus(expertId, orderStatus);
     }
-
-
 
 
     @Override
     public List<Expert> searchExpert(Map<String, String> predicateMap) {
         return expertRepository.findAll(returnSpecification(predicateMap));
     }
+
     Specification<Expert> returnSpecification(Map<String, String> predicateMap) {
         Specification<Expert> specification = Specification.where(null);
         for (Map.Entry<String, String> entry : predicateMap.entrySet()) {
-            specification=specification.and((expert, cq, cb) -> cb.equal(expert.get(entry.getKey()), entry.getValue()));
+            specification = specification.and((expert, cq, cb) -> cb.equal(expert.get(entry.getKey()), entry.getValue()));
         }
         return specification;
     }
@@ -344,8 +346,8 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public boolean verify(String code) {
         Expert expert = expertRepository.findExpertByVerificationCode(code)
-                .orElseThrow(()->new CustomizedIllegalArgumentException("code not found"));
-        if ( expert.isEnabled()) {
+                .orElseThrow(() -> new CustomizedIllegalArgumentException("code not found"));
+        if (expert.isEnabled()) {
             throw new CustomizedIllegalArgumentException(" customer is enable!");
         } else {
             expert.setVerificationCode(null);
@@ -357,28 +359,26 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public List<Expert>findAllExpertByDateRegistration(LocalDateTime localDateTime) {
-        List<Expert>findAllExpert= expertRepository.findAll();
-        List<Expert>resultExpert=new ArrayList<>();
-        for (Expert e:findAllExpert) {
-            if (e.getDateOfRegistration().equals(localDateTime)){
+    public List<Expert> findAllExpertByDateRegistration(LocalDateTime localDateTime) {
+        List<Expert> findAllExpert = expertRepository.findAll();
+        List<Expert> resultExpert = new ArrayList<>();
+        for (Expert e : findAllExpert) {
+            if (e.getDateOfRegistration().equals(localDateTime)) {
                 resultExpert.add(e);
             }
         }
         if (resultExpert.isEmpty()) {
-            throw new NotFoundException("Not exists customer with registration date  = "+ localDateTime);
+            throw new NotFoundException("Not exists customer with registration date  = " + localDateTime);
         } else return resultExpert;
     }
 
 
-
     @Transactional
     @Override
-    public List<Expert> expertReport (Map<String, String> predicateMap){
-        List<Expert>expertList = expertRepository.findAll(expertDoOrderSpecification(predicateMap));
+    public List<Expert> expertReport(Map<String, String> predicateMap) {
+        List<Expert> expertList = expertRepository.findAll(expertDoOrderSpecification(predicateMap));
         return expertList;
     }
-
 
 
     public Specification<Expert> expertDoOrderSpecification(Map<String, String> predicateMap) {
@@ -400,9 +400,29 @@ public class ExpertServiceImpl implements ExpertService {
                             Subquery<Long> subQuery = cq.subquery(Long.class);
                             Root<Order> fromOrder = subQuery.from(Order.class);
                             subQuery.select(cb.count(fromOrder.get(Order_.id)));
-                            subQuery.where(cb.equal(expertRoot.get(Expert_.id),fromOrder.get(Order_.expert).get(Expert_.id)));
-                            yield cb.greaterThanOrEqualTo(subQuery,Convertor.toLong(entry.getValue()));
+                            subQuery.where(cb.equal(expertRoot.get(Expert_.id), fromOrder.get(Order_.expert).get(Expert_.id)));
+                            yield cb.greaterThanOrEqualTo(subQuery, Convertor.toLong(entry.getValue()));
                         }
+
+                        case "enabled" ->
+                                cb.equal(expertRoot.get(Expert_.enabled), Convertor.toBoolean(entry.getValue()));
+
+                        case "personType" ->
+                                cb.equal(expertRoot.get(Expert_.PERSON_TYPE), Convertor.toPersonType(entry.getValue()));
+
+                        case "firstName" -> cb.equal(expertRoot.get(Expert_.firstName), entry.getValue());
+
+                        case "lastName" -> cb.equal(expertRoot.get(Expert_.lastName), entry.getValue());
+
+                        case "username" -> cb.equal(expertRoot.get(Expert_.username), entry.getValue());
+
+                        case "email" -> cb.equal(expertRoot.get(Expert_.email), entry.getValue());
+
+                        case "dateOfRegistration" ->
+                                cb.equal(expertRoot.get(Expert_.dateOfRegistration), Convertor.toLocalDateTime(entry.getValue()));
+                        case "score"->
+                            cb.equal(expertRoot.get(Expert_.score),Convertor.toDouble(entry.getValue()));
+
 
                         default -> throw new CustomizedIllegalArgumentException("not match query!");
                     });
@@ -415,7 +435,6 @@ public class ExpertServiceImpl implements ExpertService {
     private CreditService creditService() {
         return applicationContext.getBean(CreditService.class);
     }
-
 
 
     @Override
