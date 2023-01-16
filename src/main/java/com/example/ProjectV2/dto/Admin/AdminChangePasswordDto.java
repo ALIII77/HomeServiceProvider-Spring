@@ -12,15 +12,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AdminChangePasswordDto {
-    private String username;
-    private String oldPassword;
+
     private String newPassword;
 
-    public Admin getAdmin(){
-        Admin admin = new Admin();
-        admin.setPassword(oldPassword);
-        admin.setUsername(username);
-        return admin;
-    }
+
 
 }
