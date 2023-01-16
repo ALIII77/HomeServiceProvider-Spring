@@ -71,8 +71,6 @@ public class Customer extends Person implements UserDetails   {
 
 
 
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,5 +107,8 @@ public class Customer extends Person implements UserDetails   {
         return true;
     }
 
-
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

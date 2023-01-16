@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @MappedSuperclass
-@NoArgsConstructor
 @Setter
 @Getter
 @ToString
+@AllArgsConstructor
 public class Person extends BaseEntity<Long>  {
 
     @Column(nullable = false)
@@ -63,7 +63,7 @@ public class Person extends BaseEntity<Long>  {
     @Column(name = "verification_code", length = 64)
     private String verificationCode;
 
-    @Nullable
+
     private boolean enabled;
 
     @CreationTimestamp
@@ -84,6 +84,11 @@ public class Person extends BaseEntity<Long>  {
         this.email = email;
         this.username = username;
         this.password = password;
+    }
+
+
+
+    public Person() {
     }
 
 
