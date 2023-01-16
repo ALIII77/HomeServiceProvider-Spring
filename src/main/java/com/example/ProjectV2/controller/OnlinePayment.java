@@ -11,7 +11,6 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 public class OnlinePayment {
 
-    private final SendEmail sendEmail;
 
     @RequestMapping("/online-payment")
     public ModelAndView paymentOnline (){

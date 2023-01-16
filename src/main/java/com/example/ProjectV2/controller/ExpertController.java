@@ -24,6 +24,7 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.*;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,7 +42,6 @@ public class ExpertController {
     private final OfferService offerService;
     private final ExpertService expertService;
     private final CommentService commentService;
-    private final SendEmail sendEmail;
     private final ModelMapper modelMapper;
 
 
@@ -64,8 +64,9 @@ public class ExpertController {
 
 
     @GetMapping("show-all-order-by-expert-sub-service/{expertId}")
-    public List<OrderShowDto> showAllOrderByExpertSubService(@PathVariable Long expertId) {
-        List<Order> orderList = expertService.showAllOrderByExpertSubService(expertId);
+    public List<OrderShowDto> showAllOrderByExpertSubService(Authentication authentication) {
+        Expert expert = (Expert) authentication.getPrincipal();
+        List<Order> orderList = expertService.showAllOrderByExpertSubService(expert.getId());
         return showOrders(orderList);
     }
 
@@ -79,44 +80,53 @@ public class ExpertController {
     }
 
 
-    @PutMapping("save-expert-picture/{username}")
-    public void setExpertImage(@RequestBody MultipartFile image, @PathVariable String username) {
-        expertService.setExpertImage(username, image);
+    @PutMapping("save-expert-picture")
+    public void setExpertImage(@RequestBody MultipartFile image,Authentication authentication) {
+        Expert expert = (Expert)authentication.getPrincipal();
+        expertService.setExpertImage(expert.getUsername(), image);
     }
 
 
     @PutMapping("change-password-expert")
-    public void changePassword(@RequestBody ExpertChangePasswordDto changePasswordExpertDTO) {
-        expertService.changePassword(changePasswordExpertDTO.getExpert(), changePasswordExpertDTO.getNewPassword());
+    public void changePassword(@RequestBody ExpertChangePasswordDto changePasswordExpertDTO,Authentication authentication) {
+        Expert expert = (Expert)authentication.getPrincipal();
+        expertService.changePassword(expert.getUsername()
+                ,changePasswordExpertDTO.getOldPassword(),changePasswordExpertDTO.getNewPassword() );
     }
 
 
     @PostMapping("add-offer")
-    public void addOffer(@RequestBody AddOfferByExpertDto addOfferDto) {
+    public void addOffer(@RequestBody AddOfferByExpertDto addOfferDto , Authentication authentication) {
+        Expert expert = (Expert) authentication.getPrincipal();
         Offer newOffer = new Offer();
         newOffer.setStartDate(addOfferDto.getStartJobDate());
         newOffer.setEndDate(addOfferDto.getEndJobDate());
         newOffer.setPrice(addOfferDto.getPrice());
-        offerService.addOffer(newOffer, addOfferDto.getOrderId(), addOfferDto.getOrderId());
+        offerService.addOffer(newOffer, expert.getId(), addOfferDto.getOrderId());
     }
 
 
-    @GetMapping("find-score-by-expert-Id/{expertId}")
-    public List<Double> findScoreByExpertId(@PathVariable Long expertId) {
-        return commentService.findScoreByExpertId(expertId);
+    @GetMapping("find-score-by-expert-Id")
+    public List<Double> findScoreByExpertId(Authentication authentication) {
+        Expert expert = (Expert)authentication.getPrincipal();
+        return commentService.findScoreByExpertId(expert.getId());
     }
+
 
     @GetMapping("expert-order-profile")
-    public List<OrderDto> expertOrderProfile(@RequestParam Map<String, String> predicateMap) {
+    public List<OrderDto> expertOrderProfile(@RequestParam Map<String, String> predicateMap, Authentication authentication) {
+        Expert expert = (Expert)authentication.getPrincipal();
+        predicateMap.put("expertId",String.valueOf(expert.getId()));
         List<Order> orderList = expertService.expertOrderProfile(predicateMap);
         List<OrderDto> orderDtoList = orderDtoList(orderList);
         return orderDtoList;
     }
 
 
-    @GetMapping("expert-credit-by-id/{expertId}")
-    public double findCreditByCustomerId(@PathVariable Long expertId) {
-        return expertService.findCreditByExpertId(expertId);
+    @GetMapping("expert-credit-by-id")
+    public double findCreditByCustomerId(Authentication authentication) {
+        Expert expert = (Expert)authentication.getPrincipal();
+        return expertService.findCreditByExpertId(expert.getId());
     }
 
 
